@@ -4,7 +4,9 @@
 #include "Engine/Sprite.hpp"
 
 namespace BinF::Engine {
+    // RESOURCE MANAGER
     void Init();
+    void Exit();
 
     // RENDER SYSTEM
     void ClearScreen();
