@@ -2,10 +2,12 @@
 
 #include "Engine/Colour.hpp"
 #include "Engine/Sprite.hpp"
+#include "Engine/Input.hpp"
 
 namespace BinF::Engine {
     // RESOURCE MANAGER
-    void Init();
+    void Init(const colour palette[256] /* indx 0 reserved for empty space */);
+    void Update();
     void Exit();
 
     // RENDER SYSTEM
@@ -15,8 +17,7 @@ namespace BinF::Engine {
     void DisplayFrame();
 
     // INPUT SYSTEM
-    void Update();
-    bool ButtonPressed(u8 id);
+    bool ButtonPressed(keycode);
     u16  JoystickX();
     u16  JoystickY();
 

@@ -38,7 +38,8 @@
 #define I2S_MIC_LEFT_RIGHT_CLOCK 47 //left/right clock LRCK: pin WS
 #define I2S_MIC_SERIAL_DATA 15 //serial data DIN: pin SD
 
-
+/* disable these */
+#if 0
 // Fri3d Badge 2024 LCD
 // For using display with TFT_eSPI library
 #define USER_SETUP_LOADED // TODO check if this is really needed
@@ -65,4 +66,6 @@
 #define LOAD_GFXFF
 #define SMOOTH_FONT
 #define SPI_FREQUENCY 80000000
+
+#endif
 #endif //X_FRI3D_BADGE_2024

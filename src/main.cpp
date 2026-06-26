@@ -2,9 +2,9 @@
 
 
 void setup() {
-  BinF::Engine::Init();
+  BinF::Engine::Init(NULL);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  
 }
