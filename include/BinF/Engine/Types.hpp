@@ -4,9 +4,7 @@
 
 namespace BinF {
 
-    /*
-    ** std types -------------------
-    */
+    // std types -------------------
 
     using u64 = uint64_t;
     using u32 = uint32_t;

@@ -10,7 +10,7 @@ namespace BinF::Engine {
         KEY_Y,
         KEY_MENU,
         KEY_START,
-        KEY_COUNT, /* HACK? */
+        KEY_COUNT /* HACK? */
     };
 
     

@@ -5,15 +5,22 @@
 #include <BinF/Engine/Internal.hpp>
 
 namespace BinF::Engine {
-    const u8 KEY_PINS[KEY_COUNT] = { PIN_A, PIN_B, PIN_X, PIN_Y, PIN_MENU, PIN_START };
 
+    // KEY DATA ------------------------------------------------------------------------
+    const u8 KEY_PINS[KEY_COUNT] = { PIN_A, PIN_B, PIN_X, PIN_Y, PIN_MENU, PIN_START };
+    const u8 KEY_MODES[KEY_COUNT] = { PULLUP, PULLUP, PULLUP, PULLUP, PULLUP, INPUT };
+    constexpr u32 BOUNCE_DELAY = 25; // 25 ms
+    
     bool keyStates[KEY_COUNT] = {false};
     u32 lastBounceTime[KEY_COUNT] = {0};
-    constexpr u32 BOUNCE_DELAY = 25; // 25 ms
+
+    // JOYSTICK DATA ------------------------------------------------------------------
+    constexpr u16 joystickLow  = 0;
+    constexpr u16 joystickHigh = 0;
 
     void InitInput() {
         for (u8 i = 0; i < KEY_COUNT; i++)
-            pinMode(KEY_PINS[i], PULLUP);
+            pinMode(KEY_PINS[i], KEY_MODES[i]);
     }
 
     // noice!
@@ -42,6 +49,7 @@ namespace BinF::Engine {
             }
         }
     }
+
 
 
 }

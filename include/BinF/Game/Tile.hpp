@@ -5,13 +5,17 @@
 namespace BinF::Game {
 
     /* 
-        Tiles in BinF are 8 bit ids, with 2 first bits being direction and the rest the actual type, which leaves 64 types.
-        00: north
-        01: east
-        10: south
-        11: west
-
-        [ xx (direction) xxxxxx (type)]
+        x (is buildable) x (no walk) xxxxxx (sprite index)
     */
+    constexpr u8 TileSize = 16;
     using Tile = u8;
+    using TileSprite = const Engine::colourID[TileSize*TileSize];
+
+    inline u8 TileBuildable(Tile tile) {
+        return (tile >> 7);
+    }
+    
+    TileSprite TileSprites[64] = {  };
+
+
 }

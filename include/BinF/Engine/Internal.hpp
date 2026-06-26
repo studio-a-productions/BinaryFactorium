@@ -1,7 +1,10 @@
 #pragma once
 
 namespace BinF::Engine {
-    // initialise pins
+    // Input
     void InitInput();
     void UpdateInput();
+
+    // Time
+    void UpdateTime();
 }

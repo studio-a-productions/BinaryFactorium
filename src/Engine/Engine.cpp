@@ -14,6 +14,7 @@ namespace BinF::Engine {
     }
 
     void Update() {
+        UpdateTime();
         UpdateInput();
     }
 

@@ -5,11 +5,11 @@
 namespace BinF::Engine {
     using colour = u16;
 
-    constexpr inline colour ToColour(u8 r, u8 g, u8 b) {
+    constexpr inline colour ToColour(u8 b, u8 g, u8 r) {
         return (colour)(
-        ((r & 0xF8) << 8) |
+        ((b & 0xF8) << 3) |
         ((g & 0xFC) << 3) |
-        ((b & 0xF8) >> 3)
+        ((r & 0xF8) >> 8)
         );
     }
 
