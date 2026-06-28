@@ -22,7 +22,4 @@ namespace BinF {
     constexpr u32 u32m = 0xFFFFFFFF;
     constexpr u16 u16m = 0xFFFF;
     constexpr u8  u8m  = 0xFF;
-
-    using screen_pos = u16;
-    constexpr screen_pos max_screen_pos = 295; // 296
 }

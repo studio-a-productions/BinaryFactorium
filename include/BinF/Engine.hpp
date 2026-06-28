@@ -5,6 +5,7 @@
 #include "Engine/Input.hpp"
 #include "Engine/Time.hpp"
 #include "Engine/Math.hpp"
+#include "Engine/Renderer.hpp"
 
 namespace BinF::Engine {
     // RESOURCE MANAGER
@@ -19,7 +20,9 @@ namespace BinF::Engine {
     void PushFrame();
 
     // INPUT SYSTEM
-    bool ButtonPressed(keycode);
+    bool ButtonPressed(const keycode); // no "released" variant, is just simple "!"
+    bool ButtonDown(const keycode); // pressed this frame?
+    bool ButtonUp(const keycode); // released this frame?
     s16  JoystickX();
     s16  JoystickY();
 
