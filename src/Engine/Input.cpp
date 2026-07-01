@@ -99,14 +99,12 @@ namespace BinF::Engine {
                     : (digitalRead(KEY_PINS[i]) == HIGH);
             
                 if (keyRead != taskKeyStates[i].load(std::memory_order_relaxed)) {
-                    if (lastBounceTime[i] == 0)
-                        lastBounceTime[i] = curTim;
-                    else if (curTim - lastBounceTime[i] > BOUNCE_DELAY) {
+                    if (curTim - lastBounceTime[i] > BOUNCE_DELAY) {
                         taskKeyStates[i].store(keyRead, std::memory_order_relaxed);
-                        lastBounceTime[i] = 0;
+                        lastBounceTime[i] = curTim;
                     }
                 } else {
-                    lastBounceTime[i] = 0;
+                    lastBounceTime[i] = curTim;
                 }
             }
         
