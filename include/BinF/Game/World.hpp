@@ -1,5 +1,5 @@
 #pragma once
-#include <BinF/Engine.hpp>
+#include <BinF/Types.hpp>
 
 namespace BinF::Game {
     using WorldAxis = s64;

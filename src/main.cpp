@@ -4,7 +4,7 @@
 
 void setup() {
   Serial.begin(115200);
-  BinF::Engine::Init(NULL);
+  BinF::Engine::Init();
 }
 
 void loop() {

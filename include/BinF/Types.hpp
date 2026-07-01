@@ -17,6 +17,7 @@ namespace BinF {
     using s8  = int8_t;
 
     using f32 = float_t;
+    using f64 = double_t;
 
     constexpr u64 u64m = 0xFFFFFFFFFFFFFFFF;
     constexpr u32 u32m = 0xFFFFFFFF;

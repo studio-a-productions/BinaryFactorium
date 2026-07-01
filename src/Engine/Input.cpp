@@ -11,7 +11,7 @@ namespace BinF::Engine {
     const u8 KEY_PINS[KEY_COUNT] = { PIN_A, PIN_B, PIN_X, PIN_Y, PIN_MENU, PIN_START };
     const u8 KEY_MODES[KEY_COUNT] = { PULLUP, PULLUP, PULLUP, PULLUP, PULLUP, INPUT };
     constexpr u8 BOUNCE_DELAY = 10; // ms
-    constexpr u8  BOUNCE_TIMEOUT = 5;
+    constexpr u8 BOUNCE_TIMEOUT = 5;
     
     bool keyStates[KEY_COUNT] = { false };
     bool keyPrevStates[KEY_COUNT] = { false };
