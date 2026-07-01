@@ -9,6 +9,9 @@ namespace BinF::Engine {
         const u8 height;
     };
 
+
+    // 2D Position data
+    // BinF::Engine makes "origin" the left-upper-most pixel
     struct SpritePos {
         const screen_pos x;
         const screen_pos y;
