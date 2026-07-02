@@ -1,3 +1,9 @@
+/*
+    Copyright (c) 2026 BinF Developers
+    Licensed under the Apache License, Version 2.0
+*/
+
+
 #include <BinF/Engine.hpp>
 #include <Fri3dBadge_pins.h> /* Owned by Fri3d Camp */
 #include <atomic>

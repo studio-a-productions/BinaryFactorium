@@ -1,3 +1,8 @@
+/*
+    Copyright (c) 2026 BinF Developers
+    Licensed under the Apache License, Version 2.0
+*/
+
 #include <BinF/Engine.hpp>
 #include <BinF/Engine/Renderer.hpp>
 #include <BinF/Engine/Palette.hpp>
