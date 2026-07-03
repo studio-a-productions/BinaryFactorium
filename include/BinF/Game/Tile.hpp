@@ -15,7 +15,7 @@ namespace BinF::Game {
     */
     constexpr u8 TileSize = 16;
     using Tile = u8;
-    using TileSprite = Engine::colourID[TileSize*TileSize];
+    using TileSprite = BinF::Engine::colourID[TileSize*TileSize];
 
 
     // access helpers, could be macros, but for type safety they're just inline functions
