@@ -25,6 +25,8 @@ namespace BinF::Engine {
     void DrawSprite(screen_pos x, screen_pos y, const colourID* sprite, screen_pos s); // s is the size of both axis
     void DrawSprite(screen_pos x, screen_pos y, const colourID* sprite,
         screen_pos sprite_sx, screen_pos sprite_sy); // basically manual sprite data
+    void DrawSpriteStride(screen_pos x, screen_pos y, const colourID* sprite, 
+        screen_pos stride, screen_pos elem); // elem
     void PushFrame();
 
     // INPUT SYSTEM
