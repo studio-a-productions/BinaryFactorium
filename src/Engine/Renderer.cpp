@@ -72,6 +72,15 @@ namespace BinF::Engine {
     void DrawSprite(const screen_pos x, const screen_pos y, const colourID* sprite, const screen_pos sprite_sx, const screen_pos sprite_sy) {
         DrawData(x, y, sprite, sprite_sx, sprite_sy);
     }
+    void DrawSpriteStride(const screen_pos x, screen_pos y, const colourID* sprite, const screen_pos sprite_sx, const screen_pos sprite_sy, const screen_pos stride) {
+        for (screen_pos i = y; i < y+sprite_sy; i++) {
+            for (screen_pos j = x; j < x+sprite_sx; j++) {
+                if (*(sprite)) 
+                    framebuffer[i][j] = ColourPalette[*(sprite++)];
+            }
+            sprite += stride;
+        }
+    }
 
     void PushFrame() {
         // aparently pushImageDMA does this, but if we want our own logic, then this is prob good to do manually
