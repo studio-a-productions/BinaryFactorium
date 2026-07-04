@@ -6,6 +6,10 @@ When a variable is just data (for example a small config) and can just be the nu
 
 If it is an array of data/assets that is dynamically read (and never written to), try to use `const` to ensure that it's either inlined at compile time or stored in `Flash Memory`.
 
+## References
+
+Using references is allowed (of course), but do know that it practically is still a pointer. In some situations, it may also just be preferable to use raw pointers.
+
 ## Objects
 
 In general, avoid `class`es as they often add memory overhead. Only add objects when using them actually improves code quality, and you're not storing an array of them (prefer to use/create a special class for that instead or don't use objects at all).
