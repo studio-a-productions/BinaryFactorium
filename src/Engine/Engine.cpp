@@ -18,6 +18,7 @@ namespace BinF::Engine {
     }
 
     void Exit() {
+        // while (true) scream("coffee!")
         ExitRenderer();
     }
 }
