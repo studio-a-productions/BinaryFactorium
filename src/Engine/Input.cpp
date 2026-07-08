@@ -58,15 +58,14 @@ namespace BinF::Engine {
     }
 
     // noice!
-    bool ButtonPressed(const keycode keyc) {
+    bool ButtonDown(const keycode keyc) {
         return keyStates[keyc];
     }
 
-    bool ButtonDown(const keycode keyc) {
+    bool ButtonPressed(const keycode keyc) {
         return keyStates[keyc] && !keyPrevStates[keyc];
     }
-    bool ButtonUp(const keycode keyc) {
-        const bool keystate = keyStates[keyc];
+    bool ButtonReleased(const keycode keyc) {
         return !keyStates[keyc] && keyPrevStates[keyc];
     }
     
