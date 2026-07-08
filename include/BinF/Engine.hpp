@@ -26,7 +26,7 @@ namespace BinF::Engine {
     void DrawSprite(screen_pos x, screen_pos y, const colourID* sprite,
         screen_pos sprite_sx, screen_pos sprite_sy); // basically manual sprite data
     void DrawSpriteStride(screen_pos x, screen_pos y, const colourID* sprite, 
-        screen_pos stride, screen_pos elem); // elem
+        screen_pos sprite_sx, screen_pos sprite_sy, screen_pos stride); // unsafe function, beware: spooky mem bugs!!!
     void PushFrame();
 
     // INPUT SYSTEM
