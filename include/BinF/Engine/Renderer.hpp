@@ -6,7 +6,7 @@
 #include "common.hpp"
 #include "Colour.hpp"
 namespace BinF::Engine {
-    using screen_pos = u16;
+    using screen_pos = s16;
 
     constexpr screen_pos screen_x = 296U;
     constexpr screen_pos screen_y = 240U;
