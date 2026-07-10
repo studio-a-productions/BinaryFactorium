@@ -7,25 +7,26 @@
 #pragma once
 
 #include <BinF/Types.hpp>
+#include <BinF/Engine.hpp>
 
 namespace BinF::Game {
 
     /* 
-        x (is buildable) x (no walk) xxxxxx (sprite index)
+    x (is buildable) x (no walk) xxxxxx (sprite index)
     */
-    constexpr u8 TileSize = 16;
     using Tile = u8;
-    using TileSprite = BinF::Engine::colourID[TileSize*TileSize];
+    constexpr u8 TileSize = 16;
+    using TileSprite = Engine::colourID[TileSize*TileSize];    
 
 
     // access helpers, could be macros, but for type safety they're just inline functions
 
     inline bool TileBuildable(Tile tile) {
-        return 1 & (tile >> 7);
+        return (1<<7) & tile;
     }
 
     inline bool TileWalkable(Tile tile) {
-        return 1 & (tile >> 6);
+        return (1<<6) & tile;
     }
 
     inline u8 TileSpriteIndx(Tile tile) {

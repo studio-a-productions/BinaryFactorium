@@ -5,7 +5,17 @@
 
 #pragma once
 #include <BinF/Types.hpp>
+#include <BinF/Engine.hpp>
+#include <BinF/Game/Chunk.hpp>
 
 namespace BinF::Game {
-    using WorldAxis = s64;
+    // Chunk Coordinates
+    using WorldAxis = s32;
+
+    // moves the world based on Camera
+    void UpdateWorld();
+    
+    // renders locally stored buffer
+    void RenderWorld();
+
 }
