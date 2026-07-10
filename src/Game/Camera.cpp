@@ -6,15 +6,19 @@
 #include <BinF/Game/Camera.hpp>
 
 namespace BinF::Game {
-    CameraClass::CameraClass(const WorldAxis x, const WorldAxis y) : x{x}, y{y} {
-        // do nothing
+    CameraClass::CameraClass() {
+        // init at origin
     }
 
-    WorldAxis CameraClass::GetX() { return x; }
-    WorldAxis CameraClass::GetY() { return y; }
+    CameraClass::CameraClass(const WorldAxis, const WorldAxis, const PixelOffset, const PixelOffset) {
 
-    void CameraClass::Move(const WorldAxis newx, const WorldAxis newy) {
-        x=newx;
-        y=newy;
+    }
+
+    void CameraClass::SetPosition(const WorldAxis, const WorldAxis, const PixelOffset, const PixelOffset) {
+
+    }
+
+    void CameraClass::Move(const PixelOffset newx, const PixelOffset newy) {
+
     }
 }

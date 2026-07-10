@@ -12,11 +12,11 @@
 namespace BinF::Game {
 
     /* 
-        x (is buildable) x (no walk) xxxxxx (sprite index)
+    x (is buildable) x (no walk) xxxxxx (sprite index)
     */
-    constexpr u8 TileSize = 16;
     using Tile = u8;
-    using TileSprite = Engine::colourID[TileSize*TileSize];
+    constexpr u8 TileSize = 16;
+    using TileSprite = Engine::colourID[TileSize*TileSize];    
 
 
     // access helpers, could be macros, but for type safety they're just inline functions
@@ -26,7 +26,7 @@ namespace BinF::Game {
     }
 
     inline bool TileWalkable(Tile tile) {
-        return (1 << 6) & tile;
+        return (1<<6) & tile;
     }
 
     inline u8 TileSpriteIndx(Tile tile) {

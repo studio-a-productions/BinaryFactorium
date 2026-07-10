@@ -9,19 +9,16 @@
 #include "Tile.hpp"
 
 namespace BinF::Game {
-    using WorldChunkPos = s32;
-    using ChunkID = u64; // id used to retrieve from SD storage
+    // Sub-Chunk Coordinates
+    // (0, 0) is upper-left of chunk
+    using PixelOffset = Engine::screen_pos;
     
-    constexpr u16 ChunkTiles = 16*16;
-    
-    // generates a chunk using the chunk algorithm
-    ChunkData& GenerateChunk(WorldChunkPos x, WorldChunkPos y);
-
-    // captures chunk from storages
-    ChunkData& LoadChunk(u64 id);
+    constexpr u16 ChunkTiles = 16U*16U;
+    constexpr u16 ChunkSize  = 16U;
+    constexpr PixelOffset ChunkPixels = ChunkSize*TileSize;
 
     struct ChunkData {
-        Tile* tiles; // ChunkTiles array
+        Tile tiles[ChunkTiles]; // ChunkTiles array 
         // other data may later be added
     };
 }
