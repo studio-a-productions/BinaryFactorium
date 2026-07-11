@@ -11,6 +11,7 @@
 #include "Engine/Time.hpp"
 #include "Engine/Math.hpp"
 #include "Engine/Renderer.hpp"
+#include "Engine/FileSystem.hpp"
 
 namespace BinF::Engine {
     // RESOURCE MANAGER
