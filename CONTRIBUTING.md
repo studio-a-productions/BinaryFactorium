@@ -12,9 +12,8 @@ Using references is allowed (of course), but do know that it practically is stil
 
 ## Objects
 
-In general, avoid `class`es as they often add memory overhead. Only add objects when using them actually improves code quality, and you're not storing an array of them (prefer to use/create a special class for that instead or don't use objects at all).
-
-The codebase also allows `structs`, but doesn't allow for **AoS** (*arrays of structs*), again, to prevent memory overhead.
+In general, avoid virtual `class`es as they often add memory overhead. Only add `virtual` when using them actually improves code/design quality.
+The codebase also allows `structs`, but doesn't allow for **AoS** in cases where you need to loop over a single element of that object (*arrays of structs*), again, to prevent memory overhead.
 
 ## Namespace
 
