@@ -35,6 +35,7 @@ namespace BinF::Engine {
             if (lvl <= m_lvl) {
                 Serial.printf("%s ", prefix);
                 Serial.printf(fmt, std::forward<Args>(args)...);
+                Serial.printf("\n");
             }
         }
 
