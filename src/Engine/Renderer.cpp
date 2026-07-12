@@ -20,8 +20,8 @@ namespace BinF::Engine {
 
     // RESOURCE MANAGEMENT -----------
     void InitRenderer() {
-        framebuffer = (ScreenRow*)heap_caps_malloc(screen_y * screen_x * sizeof(colour), MALLOC_CAP_DMA);
-        renderbuffer = (ScreenRow*)heap_caps_malloc(screen_y * screen_x * sizeof(colour), MALLOC_CAP_DMA);
+        framebuffer = (ScreenRow*)Malloc(screen_y * screen_x * sizeof(colour), MemType::STD);
+        renderbuffer = (ScreenRow*)Malloc(screen_y * screen_x * sizeof(colour), MemType::STD);
         
         tft.init();
         tft.initDMA();
@@ -31,8 +31,8 @@ namespace BinF::Engine {
 
         tft.deInitDMA();
 
-        heap_caps_free(framebuffer);
-        heap_caps_free(renderbuffer);
+        Free(framebuffer);
+        Free(renderbuffer);
     }
 
     // HELPER FUNCTIONS --------------
