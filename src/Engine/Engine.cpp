@@ -7,17 +7,21 @@
 #include <SPI.h>
 #include <BinF/Engine/Internal.hpp>
 
-namespace BinF::Engine {
-    void Init() {
-        Serial.begin(115200);
-        Serial.println("[BinF::Engine] Init SPI");
-        SPI.begin(7, 8, 6);
-        Serial.println("[BinF::Engine] InitInput()");
-        InitInput();
-        Serial.println("[BinF::Engine] InitRenderer()");
-        InitRenderer();
+namespace BinF {
+    Engine::LoggerClass Logger = Engine::LogLevel::Info;
 
-        FileSystemClass FileSystem = FileSystemClass();
+}
+
+namespace BinF::Engine {
+    FileSystemClass FileSystem = FileSystemClass();
+    void Init() {
+        Logger.Info("(Engine) Init SPI");
+        SPI.begin(7, 8, 6);
+        Logger.Info("(Engine) Init Input");
+        InitInput();
+        Logger.Info("(Engine) Init Renderer");
+        InitRenderer();
+        Logger.Info("(Engine) Init FS");
         FileSystem.Begin();
     }
 

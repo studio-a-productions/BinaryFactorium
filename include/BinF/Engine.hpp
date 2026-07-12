@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "Engine/Memory.hpp"
+#include "Engine/Logger.hpp"
 #include "Engine/Colour.hpp"
 #include "Engine/Sprite.hpp"
 #include "Engine/Input.hpp"
