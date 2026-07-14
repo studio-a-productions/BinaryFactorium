@@ -11,15 +11,18 @@ namespace BinF::Engine {
     // a number representing an active file within a FS
     using FileID = u32;
     // basically path strings for names (unix-like)
+    // should point to valid data for the duration of the path's usage
     using FilePath = const char*;
 
     // all fs use "file 0" as the lookup table or just as an invalid ID
     constexpr FileID FileInvalid = 0;
+    constexpr FilePath FSExtension = ".bff";
 
     enum class FSResult : BinF::u8 {
         Ok = 0,
         NotFound,
-        IOError
+        IOError,
+        NoSpace,
     };
     enum class FSState : BinF::u8 {
         Good = 0,
@@ -33,8 +36,10 @@ namespace BinF::Engine {
 
     // File System (IO handle)
     // may later get virtual functions and logic
+    // Uses Memory.hpp's New and Delete for handles!
     class FileSystemClass;
 
+    struct FileSysImpl;
 
     class FileSystemClass {
     public:
@@ -45,22 +50,23 @@ namespace BinF::Engine {
         Begin();
 
         FSState
-        State();
+        State() const;
         
-        FileHandle
+        FileHandle&
         GetFile(FilePath);
         
         FileID 
         GetFileID(FilePath);
         
         bool 
-        FileExists(FilePath);
+        FileExists(FilePath) const;
 
         // size of 0 means error/invalid
-        u32 FileSize(FilePath);
-        u32 FileSize(FileID);
+        u32 FileSize(FilePath) const;
+        u32 FileSize(FileID) const;
 
-        FileHandle
+        // size must be specified beforehand and cannot be changed
+        FileHandle&
         CreateFile(FilePath, u32 size=256);
 
         FSResult
@@ -79,12 +85,12 @@ namespace BinF::Engine {
         FSResult
         FreeID(FileID);
     private:
+        bool PathValid(FilePath) const;
+        FSState Bad();
+        FileID NewFileID(FilePath);
         // opaque handle implementation
-        void* m_data;
-        u32 m_size;
-
-        // delete old file and move to new
-        void MoveFile(FileID, FilePath);
+        FileSysImpl m_Impl;
+        FSState m_State;
     };
 
     // default FileSystem implementation of BinF
@@ -97,14 +103,15 @@ namespace BinF::Engine {
         u32 Size() const;
 
         FSResult
-        Read(void*dest, u32 size=0U /* 0 means full file */, u32 offset = 0U);
-
+        Read(void*dest, u32 size=0U /* 0 means full file */, u32 offset = 0U) const;
         FSResult
-        Write(const void* dat, u32 size /* sizeof data */, u32 offset=0U);
+        Write(const void* dat, u32 size /* sizeof data */, u32 offset=0U) const;
+        FSResult
+        Rename(FilePath) const;
+
+        // afterwards, use Delete<FileHandle>(...);
         FSResult
         Delete();
-        FSResult
-        Rename(FilePath);
     private:
         FileID m_id;
         FileSystemClass& m_fs;
