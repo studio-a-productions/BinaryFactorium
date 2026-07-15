@@ -20,8 +20,12 @@ namespace BinF::Engine {
 
     // RESOURCE MANAGEMENT -----------
     void InitRenderer() {
-        framebuffer = (ScreenRow*)heap_caps_malloc(screen_y * screen_x * sizeof(colour), MALLOC_CAP_DMA);
-        renderbuffer = (ScreenRow*)heap_caps_malloc(screen_y * screen_x * sizeof(colour), MALLOC_CAP_DMA);
+        framebuffer     = Calloc<ScreenRow>(screen_y*2, MemType::GFX);
+        if (!framebuffer) {
+            Logger.Crit("(Renderer) No DMA memory!!!");
+            return;
+        }
+        renderbuffer    = &framebuffer[screen_y];
         
         tft.init();
         tft.initDMA();
@@ -31,8 +35,8 @@ namespace BinF::Engine {
 
         tft.deInitDMA();
 
-        heap_caps_free(framebuffer);
-        heap_caps_free(renderbuffer);
+        Free(framebuffer);
+        Free(renderbuffer);
     }
 
     // HELPER FUNCTIONS --------------
@@ -97,7 +101,7 @@ namespace BinF::Engine {
         
         const screen_pos stride = sx - clipsx;
 
-        DrawDataStride(clipx, clipy, clipdata, clipsx, clipsy, stride);
+        DrawDataStride(bx, by, clipdata, clipsx, clipsy, stride);
     }
 
     // Engine.hpp promises ---------

@@ -5,12 +5,15 @@
 
 #pragma once
 
+#include "Engine/Memory.hpp"
+#include "Engine/Logger.hpp"
 #include "Engine/Colour.hpp"
 #include "Engine/Sprite.hpp"
 #include "Engine/Input.hpp"
 #include "Engine/Time.hpp"
 #include "Engine/Math.hpp"
 #include "Engine/Renderer.hpp"
+#include "Engine/FileSystem.hpp"
 
 namespace BinF::Engine {
     // RESOURCE MANAGER
