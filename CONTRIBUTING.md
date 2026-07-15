@@ -22,3 +22,13 @@ When creating a file for *BinF*, it should either belong to `Game` or `Engine`, 
 ## Documentation
 
 While documentation is important, we'll not concern ourselves with it constantly. In the event that something is unclear, you may open up a `GitHub Issue` using the "question" or "doc-req" tag. 
+
+## Sizes
+
+For any case where you'd normally use `size_t`, we use `BinF::u32`.
+
+> Why?
+
+Binary Factorium, apart from being a game for the Fri3d Camp 2024 Badge, also tries to show how complex games can be made without eating up all system resources. Thus, by extension, we're targeting a memory footprint that *should never* exceed **a single** gigabyte.
+
+Will this bite (byte) us later? Who knows? 
