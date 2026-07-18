@@ -9,7 +9,7 @@
 
 namespace BinF::Engine {
     // a number representing an active file within a FS
-    using FileID = u32;
+    using FileID = u8;
     // basically path strings for names (unix-like)
     // should point to valid data for the duration of the path's usage
     using FilePath = const char*;
@@ -32,7 +32,6 @@ namespace BinF::Engine {
 
     // handle of a specific file for a FS
     class FileHandle;
-
 
     // File System (IO handle)
     // may later get virtual functions and logic
@@ -59,10 +58,10 @@ namespace BinF::Engine {
         GetFileID(FilePath);
         
         bool 
-        FileExists(FilePath) const;
+        FileExists(FilePath);
 
         // size of 0 means error/invalid
-        u32 FileSize(FilePath) const;
+        u32 FileSize(FilePath);
         u32 FileSize(FileID) const;
 
         // size must be specified beforehand and cannot be changed
@@ -86,6 +85,8 @@ namespace BinF::Engine {
         FreeID(FileID);
     private:
         bool PathValid(FilePath) const;
+        FilePath Extend(FilePath);
+        bool IdValid(FileID) const;
         FSState Bad();
         FileID NewFileID(FilePath);
         // opaque handle implementation
@@ -94,11 +95,12 @@ namespace BinF::Engine {
     };
 
     // default FileSystem implementation of BinF
-    extern FileSystemClass FileSystem;
+    extern FileSystemClass& FileSystem;
 
     class FileHandle {
     public:
         FileHandle(FileSystemClass& fs=FileSystem, const FileID fid=0U) : m_fs{fs}, m_id{fid} { }
+        ~FileHandle();
         bool IsValid() const;
         u32 Size() const;
 
@@ -109,11 +111,12 @@ namespace BinF::Engine {
         FSResult
         Rename(FilePath) const;
 
-        // afterwards, use Delete<FileHandle>(...);
+        // afterwards, use Delete<FileHandle>(...); to free the handle's memory itself
         FSResult
         Delete();
     private:
         FileID m_id;
         FileSystemClass& m_fs;
     };
+    extern FileHandle InvalidFile;
 }

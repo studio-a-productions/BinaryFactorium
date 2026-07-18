@@ -13,8 +13,13 @@ namespace BinF {
 }
 
 namespace BinF::Engine {
-    FileSystemClass FileSystem = FileSystemClass();
+    FileSystemClass& FileSystem = *New<FileSystemClass>();
     void Init() {
+        if (!&FileSystem) {
+            Logger.Warn("(Engine) No File System! Creating new FileSys");
+            FileSystem = *New<FileSystemClass>();
+            if (!&FileSystem) Logger.Crit("(Engine) Couldn't create File System!");
+        }
         Logger.Info("(Engine) Init SPI");
         SPI.begin(7, 8, 6);
         Logger.Info("(Engine) Init Input");
@@ -33,5 +38,6 @@ namespace BinF::Engine {
     void Exit() {
         // while (true) scream("coffee!")
         ExitRenderer();
+        Delete(&FileSystem);
     }
 }
