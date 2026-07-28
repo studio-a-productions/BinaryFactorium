@@ -7,7 +7,6 @@
 #include <Fri3dBadge_pins.h>
 #include <SPI.h>
 #include <SD.h>
-#include "FSParser.hpp"
 
 constexpr BinF::u32 ONE_KB = 1024;
 
@@ -31,7 +30,6 @@ namespace BinF::Engine {
     }
 
     struct FileSysImpl {
-        FileSystemTable Table;
         char FileNames[MaxOpenFiles][FILENAME_MAX];
         File Files[MaxOpenFiles];
         char* Buffer;
@@ -41,6 +39,9 @@ namespace BinF::Engine {
     void WriteElement(u8*& ptr, const T& value) {
         memcpy(ptr, &value, sizeof(T));
         ptr += sizeof(T);
+
+        File m = SD.open("a file");
+
     }
 
     template<typename T>
@@ -48,62 +49,6 @@ namespace BinF::Engine {
         memcpy(&value, ptr, sizeof(T));
         ptr += sizeof(T);
     }
-
-    class FileSystemTable {
-    public:
-        FileSystemTable() = default;
-        FSResult Begin() {
-            if (!SD.exists(TableFileName)) {
-                Logger.Info("(FileSys) No %s Found, creating it now", TableFileName);
-                m_Table = SD.open(TableFileName, FILE_WRITE, true);
-                if (!m_Table) return CouldNotCreate(TableFileName);
-
-                m_Space = SD.totalBytes();
-                m_Used  = SD.usedBytes();
-
-                m_FileAmount = 0U;
-            } else {
-
-            }
-            return FSResult::Ok;
-        }
-
-        FSResult AddPath(FilePath path) {
-            // define sometime
-        }
-
-        FSResult RemovePath(FilePath path) {
-            // define sometime
-        }
-
-        bool HasPath(FilePath) {
-            // define sometime
-
-
-
-            return true;
-        }
-
-        bool CanWrite(FilePath);
-        FSResult AllowWrite(FilePath, bool);
-    private:
-        File m_Table;
-        u32  m_TableSize;
-        char m_Buffer[TableBufferSize] = {'\0'};
-        u64  m_Space;
-        u64  m_Used;
-        u16  m_FileAmount;
-
-
-        FSResult 
-        ParseTable() {
-
-        }
-        void
-        ParseFile() {
-
-        }
-    };
 
     // FileHandle Impl ---------------------------------
     FileHandle::~FileHandle() {
@@ -164,11 +109,6 @@ namespace BinF::Engine {
             return Bad();
         }
 
-        if (m_Impl.Table.Begin() != FSResult::Ok) {
-            Logger.Crit("(FileSys) Couldn't init FSTable");
-            return Bad();
-        }
-
         m_State = FSState::Good;
         return FSState::Good;
     }
@@ -176,7 +116,7 @@ namespace BinF::Engine {
     FSState FileSystemClass::State() const { return m_State; }
 
     FileID FileSystemClass::NewFileID(FilePath path) {
-        if (path && PathValid(path) && m_Impl.Table.HasPath(path))
+        if (path && PathValid(path))
         for (u16 i = 0; i < MaxOpenFiles; i++) {
             if (m_Impl.FileNames[i][0] == '\0') {
                 u32 length = strlen(path);
@@ -216,7 +156,7 @@ namespace BinF::Engine {
     }
 
     bool FileSystemClass::FileExists(FilePath path) {
-        if (!PathValid(path) || !m_Impl.Table.HasPath(path)) return false;
+        if (!PathValid(path)) return false;
         return SD.exists(path);
     }
 
@@ -229,7 +169,7 @@ namespace BinF::Engine {
     }
 
     u32 FileSystemClass::FileSize(FilePath path) {
-        if (!PathValid(path) && !m_Impl.Table.HasPath(path)) return 0U;
+        if (!PathValid(path)) return 0U;
         File t_File=SD.open(path);
         if (!t_File) return 0U;
         u32 t_siz = t_File.size();
