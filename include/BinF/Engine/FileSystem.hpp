@@ -58,10 +58,10 @@ namespace BinF::Engine {
         GetFileID(FilePath);
         
         bool 
-        FileExists(FilePath);
+        FileExists(FilePath) const;
 
         // size of 0 means error/invalid
-        u32 FileSize(FilePath);
+        u32 FileSize(FilePath) const;
         u32 FileSize(FileID) const;
 
         // size must be specified beforehand and cannot be changed
@@ -85,7 +85,6 @@ namespace BinF::Engine {
         FreeID(FileID);
     private:
         bool PathValid(FilePath) const;
-        FilePath Extend(FilePath);
         bool IdValid(FileID) const;
         FSState Bad();
         FileID NewFileID(FilePath);
@@ -99,7 +98,7 @@ namespace BinF::Engine {
 
     class FileHandle {
     public:
-        FileHandle(FileSystemClass& fs=FileSystem, const FileID fid=0U) : m_fs{fs}, m_id{fid} { }
+        FileHandle(FileSystemClass& fs=FileSystem, const FileID fid=FileInvalid) : m_fs{fs}, m_id{fid} { }
         ~FileHandle();
         bool IsValid() const;
         u32 Size() const;

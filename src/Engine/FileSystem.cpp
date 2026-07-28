@@ -35,21 +35,6 @@ namespace BinF::Engine {
         char* Buffer;
     };
 
-    template<typename T>
-    void WriteElement(u8*& ptr, const T& value) {
-        memcpy(ptr, &value, sizeof(T));
-        ptr += sizeof(T);
-
-        File m = SD.open("a file");
-
-    }
-
-    template<typename T>
-    void ReadElement(u8*& ptr, T& value) {
-        memcpy(&value, ptr, sizeof(T));
-        ptr += sizeof(T);
-    }
-
     // FileHandle Impl ---------------------------------
     FileHandle::~FileHandle() {
         if (IsValid()) m_fs.FreeID(m_id);
@@ -119,10 +104,8 @@ namespace BinF::Engine {
         if (path && PathValid(path))
         for (u16 i = 0; i < MaxOpenFiles; i++) {
             if (m_Impl.FileNames[i][0] == '\0') {
-                u32 length = strlen(path);
-                memcpy(&m_Impl.FileNames[i][0], path, length);
-                m_Impl.FileNames[i][length] = '\0';
-                m_Impl.Files[i] = SD.open(path);
+                strcpy(&m_Impl.FileNames[i][0], path);
+                m_Impl.Files[i] = SD.open(path, FILE_READ, !SD.exists(path));
                 return i+1;
             }
         }
@@ -155,7 +138,7 @@ namespace BinF::Engine {
         else return FileInvalid;
     }
 
-    bool FileSystemClass::FileExists(FilePath path) {
+    bool FileSystemClass::FileExists(FilePath path) const {
         if (!PathValid(path)) return false;
         return SD.exists(path);
     }
@@ -168,7 +151,7 @@ namespace BinF::Engine {
         return FSResult::Ok;
     }
 
-    u32 FileSystemClass::FileSize(FilePath path) {
+    u32 FileSystemClass::FileSize(FilePath path) const {
         if (!PathValid(path)) return 0U;
         File t_File=SD.open(path);
         if (!t_File) return 0U;
@@ -216,4 +199,40 @@ namespace BinF::Engine {
         m_Impl.Files[id] = SD.open(m_Impl.FileNames[id]);
         return m_Impl.Files[id] ? res : FSResult::IOError;
     }
+
+    FSResult FileSystemClass::RenameFile(FileID id, FilePath path) {
+        if (!IdValid(id--)) return FSResult::NotFound;
+        if (!SD.rename(m_Impl.FileNames[id], path)) {
+            Bad();
+            return FSResult::IOError;
+        }
+        
+        strcpy(m_Impl.FileNames[id], path);
+
+        return FSResult::Ok;
+    }
+
+    FSResult FileSystemClass::DeleteFile(FileID id) {
+        if (!IdValid(id--)) return FSResult::NotFound;
+        if (m_Impl.Files[id]) m_Impl.Files[id].close();
+
+        SD.remove(m_Impl.FileNames[id]);
+
+        return FreeID(++id);
+    }
+
+    FileHandle& FileSystemClass::GetFile(FilePath path) {
+        const FileID newid = GetFileID(path);
+        if (newid == FileInvalid) return InvalidFile;
+        return *New<FileHandle>(*this, newid);
+    }
+
+    FileHandle& FileSystemClass::CreateFile(FilePath path, u32 size) {
+        /* This is an invalid opperation! */
+        if (SD.exists(path)) return InvalidFile;
+        const auto newid = GetFileID(path);
+        if (newid == FileInvalid) return InvalidFile;
+        return *New<FileHandle>(*this, newid);
+    }
+    
 }
