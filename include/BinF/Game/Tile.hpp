@@ -15,7 +15,7 @@ namespace BinF::Game {
     x (is buildable) x (no walk) xxxxxx (sprite index)
     */
     using Tile = u8;
-    constexpr u8 TileSize = 16;
+    constexpr u8 TileSize = 32U;
     using TileSprite = Engine::colourID[TileSize*TileSize];    
 
 
