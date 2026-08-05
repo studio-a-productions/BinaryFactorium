@@ -12,12 +12,12 @@ Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost al
 
 ## StudA
 
-**Role**: *General Project Manager/Maintainer* (GPM) & *Backend*
+**Role**: *Main Developer & Designer*
 
 
 ## WHY_youLOokingAT_NaMe
 
-**Role**: *Game Code* & *Design*
+**Role**: *Support*
 
 
 # Memory Overview
