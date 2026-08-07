@@ -43,4 +43,10 @@ namespace BinF::Engine {
     Time DeltaTime();           // time between two updates
     Time ReqTime();             // time since last ReqTime() or since Update()
 
+    struct StatusStruct { 
+        bool SDInserted;
+    };
+
+    extern struct StatusStruct Status;
+
 }

@@ -15,6 +15,8 @@ namespace BinF {
 namespace BinF::Engine {
     FileSystemClass& FileSystem = *New<FileSystemClass>();
     void Init() {
+        Serial.begin(115200);
+
         if (!&FileSystem) {
             Logger.Warn("(Engine) No File System! Creating new FileSys");
             FileSystem = *New<FileSystemClass>();

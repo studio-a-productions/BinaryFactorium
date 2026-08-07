@@ -9,7 +9,6 @@
 
 
 void setup() {
-  Serial.begin(115200);
   BinF::Engine::Init();
 }
 

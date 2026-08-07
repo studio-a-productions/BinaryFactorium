@@ -2,8 +2,8 @@
 #define X_FRI3D_BADGE_2024 // General Define for use in sketches or lib files
 #define X_WS2812_NUM_LEDS 5 // Number of RBG LEDs
 
-#define PIN_I2C_SDA     9
-#define PIN_I2C_SCL     18
+#define PIN_I2C_SDA       9
+#define PIN_I2C_SCL      18
 #define PIN_WS2812       12
 #define X_WS2812_NUM_LEDS 5
 
