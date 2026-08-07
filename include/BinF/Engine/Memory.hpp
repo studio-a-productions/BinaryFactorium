@@ -6,6 +6,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "Logger.hpp"
 
 namespace BinF::Engine {
     enum class MemType : u8 {

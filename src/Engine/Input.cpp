@@ -37,6 +37,8 @@ namespace BinF::Engine {
     s16 joystickX = 0;
     s16 joystickY = 0;
 
+    void InputTask(void* param);
+
     void InitInput() {
         // init keys
         for (u8 i = 0; i < KEY_COUNT; i++)

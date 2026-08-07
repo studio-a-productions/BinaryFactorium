@@ -11,6 +11,7 @@ namespace BinF::Game {
     constexpr char SettingsFileName[] = "binf/settings.bin";
     void Start() {
         Engine::Init();
+        if (Engine::FileSystem.State() != Engine::FSState::Bad)
         if (Engine::FileSystem.FileExists(SettingsFileName)) {
             auto& settingsfile = Engine::FileSystem.GetFile(SettingsFileName);
             if (!settingsfile.IsValid()) return;
@@ -26,6 +27,8 @@ namespace BinF::Game {
         if (Engine::ButtonDown(Engine::KEY_A)) Engine::ClearFrame();
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
+
+        Engine::Wait(100);
     }
 
     void End() {

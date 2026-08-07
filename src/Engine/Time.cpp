@@ -20,9 +20,13 @@ namespace BinF::Engine {
     }
 
     Time ReqTime() {
-        static Time timedif = requestTime - millis();
+        Time timedif = requestTime - millis();
         requestTime = millis();
         return timedif;
+    }
+
+    void Wait(Time mil) {
+        delay(mil);
     }
 
 }

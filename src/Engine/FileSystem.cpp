@@ -8,16 +8,10 @@
 #include <SPI.h>
 #include <SD.h>
 
-constexpr BinF::u32 ONE_KB = 1024;
+
 
 namespace BinF::Engine {
     constexpr FilePath TableFileName = "/table.bff";
-    constexpr FileID MaxOpenFiles = 16U;
-    constexpr u32 MaxFileName = FILENAME_MAX-24U;
-    constexpr u16 MaxFiles = 100U;
-    constexpr u32 TableBufferSize = 100U;
-    constexpr u64 FSMinSize = ONE_KB*5000ULL;   /* ~ 5 MB  */
-    constexpr u32 MaxFileSize = ONE_KB*10U;     /* ~ 10 KB */
 
     using FileName = char[FILENAME_MAX];
     
@@ -29,11 +23,6 @@ namespace BinF::Engine {
         return FSResult::IOError;
     }
 
-    struct FileSysImpl {
-        char FileNames[MaxOpenFiles][FILENAME_MAX];
-        File Files[MaxOpenFiles];
-        char* Buffer;
-    };
 
     // FileHandle Impl ---------------------------------
     FileHandle::~FileHandle() {
@@ -121,10 +110,6 @@ namespace BinF::Engine {
         if (length > MaxFileName) return false;
         if (*path != '/') return false;
         return true;
-    }
-
-    FilePath Extend(FilePath) {
-
     }
 
     bool FileSystemClass::IdValid(FileID id) const {

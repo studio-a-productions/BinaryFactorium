@@ -5,13 +5,13 @@
 */
 
 #include <Arduino.h>
-#include <BinF/Engine.hpp>
+#include <BinF/Game.hpp>
 
 
 void setup() {
-  BinF::Engine::Init();
+  BinF::Game::Start();
 }
 
 void loop() {
-
+  BinF::Game::Update();
 }

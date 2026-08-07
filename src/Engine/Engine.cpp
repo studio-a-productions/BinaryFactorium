@@ -17,13 +17,16 @@ namespace BinF::Engine {
     void Init() {
         Serial.begin(115200);
 
+        Wait(2000);
+
+        Logger.Info("(Engine) Init SPI");
+        SPI.begin(7, 8, 6);
         if (!&FileSystem) {
             Logger.Warn("(Engine) No File System! Creating new FileSys");
             FileSystem = *New<FileSystemClass>();
             if (!&FileSystem) Logger.Crit("(Engine) Couldn't create File System!");
         }
-        Logger.Info("(Engine) Init SPI");
-        SPI.begin(7, 8, 6);
+
         Logger.Info("(Engine) Init Input");
         InitInput();
         Logger.Info("(Engine) Init Renderer");

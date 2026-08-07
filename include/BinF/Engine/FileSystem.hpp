@@ -6,6 +6,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <SD.h>
 
 namespace BinF::Engine {
     // a number representing an active file within a FS
@@ -17,6 +18,12 @@ namespace BinF::Engine {
     // all fs use "file 0" as the lookup table or just as an invalid ID
     constexpr FileID FileInvalid = 0;
     constexpr FilePath FSExtension = ".bff";
+    constexpr FileID MaxOpenFiles = 16U;
+    constexpr u32 MaxFileName = FILENAME_MAX-24U;
+    constexpr u16 MaxFiles = 100U;
+    constexpr u32 TableBufferSize = 100U;
+    constexpr u64 FSMinSize = ONE_KB*5000ULL;   /* ~ 5 MB  */
+    constexpr u32 MaxFileSize = ONE_KB*10U;     /* ~ 10 KB */
 
     enum class FSResult : BinF::u8 {
         Ok = 0,
@@ -38,7 +45,11 @@ namespace BinF::Engine {
     // Uses Memory.hpp's New and Delete for handles!
     class FileSystemClass;
 
-    struct FileSysImpl;
+    struct FileSysImpl {
+        char FileNames[MaxOpenFiles][FILENAME_MAX];
+        File Files[MaxOpenFiles];
+        char* Buffer;
+    };
 
     class FileSystemClass {
     public:
@@ -89,7 +100,7 @@ namespace BinF::Engine {
         FSState Bad();
         FileID NewFileID(FilePath);
         // opaque handle implementation
-        FileSysImpl m_Impl;
+        struct FileSysImpl m_Impl;
         FSState m_State;
     };
 
