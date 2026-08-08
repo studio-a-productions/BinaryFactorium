@@ -4,7 +4,7 @@
 */
 
 #pragma once
-
+#include "common.hpp"
 namespace BinF::Engine {
     // Input
     void InitInput();
@@ -17,4 +17,7 @@ namespace BinF::Engine {
     // Renderer
     void InitRenderer();
     void ExitRenderer();
+
+    // SPI Interface
+    SPIClass& GetSPI();
 }

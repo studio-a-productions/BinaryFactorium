@@ -29,6 +29,7 @@ namespace BinF::Engine {
         
         tft.init();
         tft.initDMA();
+        tft.writecommand(TFT_MADCTL);
     }
     void ExitRenderer() {
         if (tft.dmaBusy()) tft.dmaWait();
@@ -37,6 +38,9 @@ namespace BinF::Engine {
 
         Free(framebuffer);
         Free(renderbuffer);
+    }
+    SPIClass& GetSPI() {
+        return tft.getSPIinstance();
     }
 
     // HELPER FUNCTIONS --------------

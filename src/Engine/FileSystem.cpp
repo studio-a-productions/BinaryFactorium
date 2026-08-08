@@ -3,6 +3,7 @@
     Licensed under the Apache License, Version 2.0
 */
 #include <BinF/Engine.hpp>
+#include <BinF/Engine/Internal.hpp>
 #include <BinF/Engine/FileSystem.hpp>
 #include <Fri3dBadge_pins.h>
 #include <SPI.h>
@@ -78,7 +79,7 @@ namespace BinF::Engine {
             return Bad();
         }
 
-        if (!SD.begin(PIN_SDCARD_CS, SPI, SPI_FREQUENCY, "/sd", MaxFiles, true)) {
+        if (!SD.begin(PIN_SDCARD_CS, GetSPI(), SPI_FREQUENCY, "/sd", MaxFiles, true)) {
             Logger.Crit("(FileSys) Failed to init SD");
             return Bad();
         }

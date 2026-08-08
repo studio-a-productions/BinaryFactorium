@@ -19,8 +19,8 @@ namespace BinF::Engine {
 
         Wait(2000);
 
-        Logger.Info("(Engine) Init SPI");
-        SPI.begin(7, 8, 6);
+        //Logger.Info("(Engine) Init SPI");
+        //SPI.begin(7, 8, 6);
         if (!&FileSystem) {
             Logger.Warn("(Engine) No File System! Creating new FileSys");
             FileSystem = *New<FileSystemClass>();
