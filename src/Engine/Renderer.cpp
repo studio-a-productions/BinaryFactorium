@@ -29,7 +29,8 @@ namespace BinF::Engine {
         
         tft.init();
         tft.initDMA();
-        tft.setRotation(0);
+        tft.writecommand(TFT_MADCTL);
+        tft.writedata(TFT_MAD_BGR | TFT_MAD_MV);
         tft.fillScreen(TFT_BLACK);
     }
     void ExitRenderer() {

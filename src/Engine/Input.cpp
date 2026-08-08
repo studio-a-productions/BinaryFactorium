@@ -15,7 +15,7 @@ namespace BinF::Engine {
 
     // KEY DATA ------------------------------------------------------------------------
     const u8 KEY_PINS[KEY_COUNT] = { PIN_A, PIN_B, PIN_X, PIN_Y, PIN_MENU, PIN_START };
-    const u8 KEY_MODES[KEY_COUNT] = { PULLUP, PULLUP, PULLUP, PULLUP, PULLUP, INPUT };
+    const u8 KEY_MODES[KEY_COUNT] = { INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT };
     constexpr u8 BOUNCE_DELAY = 10; // ms
     constexpr u8 BOUNCE_TIMEOUT = 5;
     
@@ -101,7 +101,10 @@ namespace BinF::Engine {
         for (;;) {
             Time curTim = millis();
             for (u8 i = 0; i < KEY_COUNT; i++) {
-                keyRead = (digitalRead(KEY_PINS[i]));
+                keyRead = (KEY_MODES[i] == INPUT_PULLUP)
+                    ? (digitalRead(KEY_PINS[i]) == LOW)
+                    : (digitalRead(KEY_PINS[i]) == HIGH);
+            
                 //Logger.Info("Keystate (%hhu): %d", i, keyRead );
                 if (keyRead != taskKeyStates[i].load(std::memory_order_relaxed)) {
                     if (curTim - lastBounceTime[i] > BOUNCE_DELAY) {
