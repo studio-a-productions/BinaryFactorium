@@ -20,4 +20,5 @@ namespace BinF::Engine {
 
     // SPI Interface
     SPIClass& GetSPI();
+    void WaitForSPI();
 }

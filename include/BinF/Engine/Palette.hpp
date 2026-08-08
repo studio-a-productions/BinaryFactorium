@@ -14,7 +14,7 @@ namespace BinF::Engine {
 
     // user MUST change their palette here (for now)
     // later the engine may add additional palette support (runtime loaded) it'll though slower
-    const colour ColourPalette[PaletteSize] = { 
+    const colour ColourPalette[] = { 
         0U,     // indx 0 reserved in engine
         0x0000,
         0x0173,

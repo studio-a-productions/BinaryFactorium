@@ -101,10 +101,8 @@ namespace BinF::Engine {
         for (;;) {
             Time curTim = millis();
             for (u8 i = 0; i < KEY_COUNT; i++) {
-                keyRead = (KEY_MODES[i] == PULLUP)
-                    ? (digitalRead(KEY_PINS[i]) == LOW)
-                    : (digitalRead(KEY_PINS[i]) == HIGH);
-            
+                keyRead = (digitalRead(KEY_PINS[i]));
+                //Logger.Info("Keystate (%hhu): %d", i, keyRead );
                 if (keyRead != taskKeyStates[i].load(std::memory_order_relaxed)) {
                     if (curTim - lastBounceTime[i] > BOUNCE_DELAY) {
                         taskKeyStates[i].store(keyRead, std::memory_order_relaxed);

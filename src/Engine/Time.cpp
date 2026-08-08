@@ -16,11 +16,11 @@ namespace BinF::Engine {
     }
 
     Time DeltaTime() {
-        return frameTime - millis();
+        return millis() - frameTime;
     }
 
     Time ReqTime() {
-        Time timedif = requestTime - millis();
+        Time timedif = millis() - requestTime;
         requestTime = millis();
         return timedif;
     }

@@ -29,7 +29,8 @@ namespace BinF::Engine {
         
         tft.init();
         tft.initDMA();
-        tft.writecommand(TFT_MADCTL);
+        tft.setRotation(0);
+        tft.fillScreen(TFT_BLACK);
     }
     void ExitRenderer() {
         if (tft.dmaBusy()) tft.dmaWait();
@@ -158,7 +159,10 @@ namespace BinF::Engine {
 
         tft.startWrite();
         tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0]);
-        tft.endWrite();
+    }
+
+    void WaitForSPI() {
+        if (tft.dmaBusy()) tft.endWrite();
     }
     
 }

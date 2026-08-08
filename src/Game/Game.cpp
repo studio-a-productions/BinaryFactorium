@@ -23,8 +23,12 @@ namespace BinF::Game {
 
     void Update() {
         Engine::Update();
-        Engine::DrawSprite(Engine::screen_x/2, Engine::screen_y/2, CursorTrue[0], 16);
-        if (Engine::ButtonDown(Engine::KEY_A)) Engine::ClearFrame();
+        Engine::DrawSprite(Engine::screen_x/2, Engine::screen_y/2, &CursorTrue[0][0], 16);
+        if (Engine::ButtonDown(Engine::KEY_A)) {
+            Logger.Info("A Pressed!!!");
+            Engine::Wait(100);
+            Engine::ClearFrame();
+        }
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
 
