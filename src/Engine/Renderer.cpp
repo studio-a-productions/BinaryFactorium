@@ -154,16 +154,16 @@ namespace BinF::Engine {
     void PushFrame() {
         // aparently pushImageDMA does this, but if we want our own logic, then this is prob good to do manually
         if (tft.dmaBusy()) tft.dmaWait();
-
+        tft.endWrite();
         // Newton's Negative Fourth law
         SwapBuffers();
-
+        tft.fillScreen(TFT_BLACK);
         tft.startWrite();
         tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0]);
     }
 
     void WaitForSPI() {
-        if (tft.dmaBusy()) tft.endWrite();
+        tft.endWrite();
     }
     
 }

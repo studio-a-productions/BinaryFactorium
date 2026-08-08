@@ -9,6 +9,8 @@
 #include <BinF/Game/Assets.hpp>
 namespace BinF::Game {
     constexpr char SettingsFileName[] = "binf/settings.bin";
+    Engine::screen_pos x;
+    Engine::screen_pos y;
     void Start() {
         Engine::Init();
         if (Engine::FileSystem.State() != Engine::FSState::Bad)
@@ -16,6 +18,8 @@ namespace BinF::Game {
             auto& settingsfile = Engine::FileSystem.GetFile(SettingsFileName);
             if (!settingsfile.IsValid()) return;
             settingsfile.~FileHandle();
+            x = Engine::screen_x/2;
+            y = Engine::screen_y/2;
         }
 
         Logger.Info("I init!!!");
@@ -23,16 +27,16 @@ namespace BinF::Game {
 
     void Update() {
         Engine::Update();
-        Engine::DrawSprite(Engine::screen_x/2, Engine::screen_y/2, Miner, 32, 74);
-        if (Engine::ButtonDown(Engine::KEY_A)) {
-            Logger.Info("A Pressed!!!");
-            Engine::Wait(100);
-            //Engine::ClearFrame();
-        }
+        Engine::ClearFrame();
+        x += Engine::JoystickX();
+        y += Engine::JoystickY();
+        Engine::DrawSprite(x, y, Miner, 32, 74);
+        
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
+        Logger.Info("X (%hd), Y (%hd)", x, y);
 
-        Engine::Wait(100);
+        Engine::Wait(200);
     }
 
     void End() {

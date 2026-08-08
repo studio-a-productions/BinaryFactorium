@@ -31,7 +31,7 @@ namespace BinF::Engine {
 
     constexpr s16 joystickDigitalL  = -32768;
     constexpr s16 joystickDigitalH  = 32767;
-    constexpr s16 joystickDeadzone  = 1500;
+    constexpr s16 joystickDeadzone  = joystickDigitalH/2;
 
 
     s16 joystickX = 0;
@@ -120,6 +120,15 @@ namespace BinF::Engine {
         }
     }
 
+    inline u16 ReadJoystickAveraged(u8 pin) {
+        constexpr u8 samples = 8;
+        u32 sum = 0;
+        ReqTime();
+        for (u8 i = 0; i < samples; i++) sum += analogRead(pin);
+        Logger.Info("(Input) Sample Time: %u", ReqTime());
+        return sum / samples;
+    }
+
     void UpdateInput() {
         u16 rawJX;
         u16 rawJY;
@@ -133,8 +142,8 @@ namespace BinF::Engine {
 
         // joystick updates
         // these cannot be moved into the task, as the cost of analogRead is to big to pay for every BOUNCE_TIMEOUT
-        rawJX = analogRead(PIN_JOY_X);
-        rawJY = analogRead(PIN_JOY_Y);
+        rawJX = ReadJoystickAveraged(PIN_JOY_X);
+        rawJY = ReadJoystickAveraged(PIN_JOY_Y);
 
         joystickX = JoystickDigital(rawJX);
         joystickY = JoystickDigital(rawJY);

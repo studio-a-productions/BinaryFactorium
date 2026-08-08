@@ -36,8 +36,8 @@ namespace BinF::Engine {
     bool ButtonDown(keycode);       // no "down" variant, just use a simple "!"
     bool ButtonPressed(keycode);    // pressed this frame?
     bool ButtonReleased(keycode);   // released this frame?
-    s16  JoystickX();               // get the X-axis (SDL-style)
-    s16  JoystickY();               // get the Y-axis (SDL-style)
+    s16 JoystickX();                // get the X-axis (SDL-style)
+    s16 JoystickY();                // get the Y-axis (SDL-style)
 
     // TIME SYSTEM
     Time DeltaTime();           // time between two updates
