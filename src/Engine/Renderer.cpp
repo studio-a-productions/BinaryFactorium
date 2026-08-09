@@ -31,6 +31,7 @@ namespace BinF::Engine {
         tft.initDMA();
         tft.writecommand(TFT_MADCTL);
         tft.writedata(TFT_MAD_BGR | TFT_MAD_MV);
+        tft.setSwapBytes(true);
         tft.fillScreen(TFT_BLACK);
     }
     void ExitRenderer() {
