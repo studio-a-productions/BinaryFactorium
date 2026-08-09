@@ -28,15 +28,14 @@ namespace BinF::Game {
     void Update() {
         Engine::Update();
         Engine::ClearFrame();
-        x += Engine::JoystickX();
-        y += Engine::JoystickY();
+        x += Engine::JoystickX()/9362;
+        y -= Engine::JoystickY()/9362;
         Engine::DrawSprite(x, y, Miner, 32, 74);
         
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
         Logger.Info("X (%hd), Y (%hd)", x, y);
 
-        Engine::Wait(200);
     }
 
     void End() {

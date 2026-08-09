@@ -25,7 +25,7 @@ Requirements:
     pip install pillow numpy --break-system-packages
 
 Usage:
-    python3 rgb565_palette_tool.py
+    python3 auto-gen.py
 """
 
 import os
@@ -57,10 +57,10 @@ NEAREST_CHUNK = 2000               # chunk size for nearest-colour search (memor
 # --------------------------------------------------------------------------
 
 def rgb_to_565(r, g, b):
-    """Pack 8-bit r,g,b into a 16-bit RGB565 value."""
-    r5 = (r >> 3) & 0x1F
-    g6 = (g >> 2) & 0x3F
-    b5 = (b >> 3) & 0x1F
+    """Pack 8-bit r,g,b into a 16-bit RGB565 value (rounded to nearest level)."""
+    r5 = min(31, (r * 31 + 127) // 255)
+    g6 = min(63, (g * 63 + 127) // 255)
+    b5 = min(31, (b * 31 + 127) // 255)
     return (r5 << 11) | (g6 << 5) | b5
 
 
@@ -76,10 +76,13 @@ def rgb565_to_rgb(v):
 
 
 def rgb_array_to_565(arr_r, arr_g, arr_b):
-    """Vectorised RGB -> RGB565 for numpy uint arrays."""
-    r5 = (arr_r.astype(np.uint32) >> 3) & 0x1F
-    g6 = (arr_g.astype(np.uint32) >> 2) & 0x3F
-    b5 = (arr_b.astype(np.uint32) >> 3) & 0x1F
+    """Vectorised RGB -> RGB565 for numpy uint arrays (rounded to nearest level)."""
+    r32 = arr_r.astype(np.uint32)
+    g32 = arr_g.astype(np.uint32)
+    b32 = arr_b.astype(np.uint32)
+    r5 = np.minimum(31, (r32 * 31 + 127) // 255)
+    g6 = np.minimum(63, (g32 * 63 + 127) // 255)
+    b5 = np.minimum(31, (b32 * 31 + 127) // 255)
     return (r5 << 11) | (g6 << 5) | b5
 
 

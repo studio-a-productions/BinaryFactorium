@@ -115,9 +115,12 @@ namespace BinF::Engine {
 
     // clear frame buffer 
     void ClearFrame(const colour col) {
+        ReqTime();
+        Logger.Info("(Renderer) Starting Clear Frame...");
         for (screen_pos i = 0U; i < screen_y; i++)
             for (screen_pos j = 0U; j < screen_x; j++)
                 framebuffer[i][j] = col;
+        Logger.Info("(Renderer) Clearing took %u seconds", ReqTime());
     }
 
 
@@ -157,7 +160,6 @@ namespace BinF::Engine {
         tft.endWrite();
         // Newton's Negative Fourth law
         SwapBuffers();
-        tft.fillScreen(TFT_BLACK);
         tft.startWrite();
         tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0]);
     }
