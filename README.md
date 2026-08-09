@@ -1,5 +1,19 @@
 # Binary Factorium
 
+> Do you love the *sweet smell of industry* in the morning?
+
+> Does terra firma fill you with terror versus firm factory foundations?
+
+> Have you ever looked at mother nature's plendour and thought, ***"Ugh..."***?
+
+Well then, welcome aboard! You will be nobly shaving off that superfluous greenery, refining it into pure profit!
+
+We have brave Fix-It pioneers, building up bargains factories, and now you too can join them!
+
+> Welcome to the Awesome Shop.
+
+# Serious Info Stuff (SIS)
+
 This project is a Factorio-inspired game for the Fri3d Badge 2024 (and maybe 2026). It is currently in-development.
 
 It'll be free for all to *use*, *learn*, and *install*, under the [licence](LICENCE) of this project.
@@ -17,12 +31,13 @@ Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost al
 
 ## WHY_youLOokingAT_NaMe
 
-**Role**: *Support*
+**Role**: *Support* (vocal)
 
 
 # Memory Overview
 
 Mem/stor consumption overview (this will be later moved to docs)
+Updates come and go, since I'm rushing to finish it.
 
 ## const (FLASH)
 

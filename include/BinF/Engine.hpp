@@ -40,9 +40,10 @@ namespace BinF::Engine {
     s16 JoystickY();                // get the Y-axis (SDL-style)
 
     // TIME SYSTEM
-    Time DeltaTime();           // time between two updates
+    Time DeltaTime();           // delta between updates
     Time ReqTime();             // time since last ReqTime() or since Update()
-    void Wait(Time);
+    void Wait(Time);            // Wait ms
+    Time GetTime();             // Get curent ms since launch (may wrap)
 
     struct StatusStruct { 
         bool SDInserted;

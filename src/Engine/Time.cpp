@@ -7,16 +7,19 @@
 #include <BinF/Engine/Internal.hpp>
 
 namespace BinF::Engine {
-    Time frameTime = 0;
-    Time requestTime = 0;
+    Time lastFrameTime = 0U;
+    Time frameTime = 0U;
+    Time requestTime = 0U;
 
     void UpdateTime() {
-        frameTime = millis();
-        requestTime = millis();
+        const Time curTime = millis();
+        frameTime = curTime - lastFrameTime;
+        lastFrameTime = curTime;
+        requestTime = curTime;
     }
 
     Time DeltaTime() {
-        return millis() - frameTime;
+        return frameTime;
     }
 
     Time ReqTime() {
@@ -27,6 +30,10 @@ namespace BinF::Engine {
 
     void Wait(Time mil) {
         delay(mil);
+    }
+
+    Time GetTime() {
+        return millis();
     }
 
 }
