@@ -80,3 +80,9 @@ Why not use a single buffer? Well, screen tear is a big problem. If you want to 
 | component | memory | info |
 | :-------- | :----: | :--- |
 | Local ChunkData | 2304 bytes | Soring local tiles in one big array (currently 3x3 chunks), not accounting for any nodes. |
+
+
+
+**You have reached the bottem of the page**, please pay `500 MegaCredits` to continue.
+
+![MegaCorp Incorporated corporation Fix-It contracted entity of personhood inside regulation low-budget suit](./webassets/PlayerSprite.gif)
