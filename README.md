@@ -24,15 +24,25 @@ Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost al
 
 # Development & Maintenance
 
-## StudA
+## Current Status
+
+Currently the project is aiming for a **Minimal Viable Product** (*MVP*) meaning that it won't be the *complete* game. After [**Fri3d**](https://fri3d.be/) **2026** the game's development will continue, though it may be retargeted to desktop. If enough people like this project, it will become an actual game to play on [Steam](https://store.steampowered.com/about).
+
+The current goal is to have a single, simple world with some basic factory logic.
+
+Most of the Factory Logic has already been thought about on paper, but not yet implemented. (this is what we in science call [*procrastination*](https://en.wikipedia.org/wiki/Procrastination))
+
+> Yes, I love pasting in links °v°
+
+## People
+
+### StudA (me)
 
 **Role**: *Main Developer & Designer*
 
-
-## WHY_youLOokingAT_NaMe
+### WHY_youLOokingAT_NaMe
 
 **Role**: *Support* (vocal)
-
 
 # Memory Overview
 
