@@ -22,6 +22,10 @@ It'll be free for all to *use*, *learn*, and *install*, under the [licence](LICE
 
 Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost all its writing. If this name were to be already in use, then know Binary Factorium is not trying to impersonate whatever uses it.
 
+## Commit History
+
+As you can see in the history of this repository, I mainly use Git as a save tool and as a way to sync my progress (however small) on other devices. Most of the code you see here is written in my free time, and not always on the same desktop/enviroment. Do *not* expect clean commit messages or diffs.
+
 # Development & Maintenance
 
 ## Current Status
@@ -71,13 +75,8 @@ Why not use a single buffer? Well, screen tear is a big problem. If you want to 
 | KeyTask | ~ 8.2 kb | The space allocated for the InputTask task/thread, which does debouncing on key presses async from game/engine logic |
 | Key data | 204 bytes | Not counting for atomics, this is around the amount of memory the arrays take up |
 
-
-
 ### World & Chunk
 
 | component | memory | info |
 | :-------- | :----: | :--- |
 | Local ChunkData | 2304 bytes | Soring local tiles in one big array (currently 3x3 chunks), not accounting for any nodes. |
-
-
-

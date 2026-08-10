@@ -39,10 +39,26 @@ namespace BinF::Engine {
             }
         }
 
-        template<typename... Args> void Crit(LogMessage fmt, Args&&... args)     { Log(fmt, LogLevel::Critical, std::forward<Args>(args)...); }
-        template<typename... Args> void Error(LogMessage fmt, Args&&... args)    { Log(fmt, LogLevel::Error, std::forward<Args>(args)...); }
-        template<typename... Args> void Warn(LogMessage fmt, Args&&... args)     { Log(fmt, LogLevel::Warning, std::forward<Args>(args)...); }
-        template<typename... Args> void Info(LogMessage fmt, Args&&... args)     { Log(fmt, LogLevel::Info, std::forward<Args>(args)...); }
+        template<typename... Args> void Crit(LogMessage fmt, Args&&... args)     { 
+            #if BINF_LOGLEVEL >= BINF_CRIT  
+            Log(fmt, LogLevel::Critical, std::forward<Args>(args)...); 
+            #endif
+        }
+        template<typename... Args> void Error(LogMessage fmt, Args&&... args)    { 
+            #if BINF_LOGLEVEL >= BINF_ERROR
+            Log(fmt, LogLevel::Error, std::forward<Args>(args)...); 
+            #endif
+        }
+        template<typename... Args> void Warn(LogMessage fmt, Args&&... args)     { 
+            #if BINF_LOGLEVEL >= BINF_WARN
+            Log(fmt, LogLevel::Warning, std::forward<Args>(args)...); 
+            #endif
+        }
+        template<typename... Args> void Info(LogMessage fmt, Args&&... args)     { 
+            #if BINF_LOGLEVEL >= BINF_INFO
+            Log(fmt, LogLevel::Info, std::forward<Args>(args)...); 
+            #endif
+        }
     private:
         const LogLevel m_lvl;
     };

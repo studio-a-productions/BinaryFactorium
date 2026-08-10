@@ -15,16 +15,6 @@ namespace BinF::Game {
     x (is buildable) x (no walk) xxxxxx (sprite index)
     */
     using Tile = BinF::u8;
-    enum class TileTyoe : BinF::u8 {
-        Dirt,
-        Grass,
-        Stone,
-        IronOre,
-        CoalOre,
-        GoldOre
-        /* more to be added ;-; */
-
-    };
 
     constexpr u8 TileSize = 32U;
     using TileSprite = Engine::colourID[TileSize*TileSize];    

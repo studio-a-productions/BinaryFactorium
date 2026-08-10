@@ -9,7 +9,7 @@
 #include "Logger.hpp"
 
 namespace BinF::Engine {
-    enum class MemType : u8 {
+    enum class MemType : BinF::u8 {
         GFX,
         Internal,
         External,
