@@ -20,7 +20,4 @@ namespace BinF::Game {
         Tile tiles[ChunkTiles]; // ChunkTiles array 
         // other data may later be added
     };
-    
-    ChunkData& GenerateChunk(WorldAxis, WorldAxis);
-    
 }
