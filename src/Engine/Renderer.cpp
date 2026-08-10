@@ -162,7 +162,13 @@ namespace BinF::Engine {
         // Newton's Negative Fourth law
         SwapBuffers();
         tft.startWrite();
-        tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0]);
+        #if BINF_PLATFORM == FRI3D2024
+        tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0] );
+        #elif BINF_PLATFORM == FRI3D2026
+        tft.pushImageDMA( (TFT_WIDTH - screen_x)/2, (TFT_HEIGHT - screen_y)/2, screen_x, screen_y, &renderbuffer[0][0]);
+        #else
+        #error [BinF] Engine Renderer not supported for platform
+        #endif
     }
 
     void WaitForSPI() {
