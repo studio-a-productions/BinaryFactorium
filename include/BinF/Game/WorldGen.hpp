@@ -14,5 +14,5 @@ namespace BinF::Game {
     void SetSeed(Seed);
 
     // generate chunk
-    ChunkData& GenerateChunk(WorldAxis, WorldAxis);
+    ChunkData* GenerateChunk(WorldAxis, WorldAxis);
 }
