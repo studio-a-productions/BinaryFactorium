@@ -5,7 +5,7 @@
 
 
 #include <BinF/Engine.hpp>
-#include <Fri3dBadge_pins.h> /* Owned by Fri3d Camp */
+#include <Fri3d/Badge_pins.h> /* Owned by Fri3d Camp */
 #include <atomic>
 
 // internal comm between cpp-impl and resource manager: engine.cpp (eg InitInput, UpdateInput)

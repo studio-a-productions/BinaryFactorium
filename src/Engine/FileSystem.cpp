@@ -5,7 +5,7 @@
 #include <BinF/Engine.hpp>
 #include <BinF/Engine/Internal.hpp>
 #include <BinF/Engine/FileSystem.hpp>
-#include <Fri3dBadge_pins.h>
+#include <Fri3d/Badge_pins.h>
 #include <SPI.h>
 #include <SD.h>
 
