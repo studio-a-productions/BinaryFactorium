@@ -19,6 +19,7 @@
 #define BINF_NONE       0
 
 #ifndef BINF_PLATFORM
+#define BINF_PLATFORM
 #error [BinF] BinF::Engine requires platform specification
 #endif
 

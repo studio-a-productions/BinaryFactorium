@@ -5,6 +5,7 @@
 
 #pragma once
 #include "common.hpp"
+#include <Fri3d.h>
 namespace BinF::Engine {
     // Input
     void InitInput();
@@ -21,4 +22,8 @@ namespace BinF::Engine {
     // SPI Interface
     SPIClass& GetSPI();
     void WaitForSPI();
+
+    #if BINF_PLATFORM == FRI3D2026
+    extern Fri3dXP expander;
+    #endif
 }

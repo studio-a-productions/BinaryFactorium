@@ -5,7 +5,7 @@
 
 
 #include <BinF/Engine.hpp>
-#include <Fri3d/Badge_pins.h> /* Owned by Fri3d Camp */
+#include <Fri3d.h>
 #include <atomic>
 
 // internal comm between cpp-impl and resource manager: engine.cpp (eg InitInput, UpdateInput)
@@ -13,16 +13,19 @@
 
 namespace BinF::Engine {
 
+    #if BINF_PLATFORM == FRI3D2024
     // KEY DATA ------------------------------------------------------------------------
     const u8 KEY_PINS[KEY_COUNT] = { PIN_A, PIN_B, PIN_X, PIN_Y, PIN_MENU, PIN_START };
     const u8 KEY_MODES[KEY_COUNT] = { INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT_PULLUP, INPUT };
     constexpr u8 BOUNCE_DELAY = 10; // ms
     constexpr u8 BOUNCE_TIMEOUT = 5;
     
-    bool keyStates[KEY_COUNT] = { false };
-    bool keyPrevStates[KEY_COUNT] = { false };
     std::atomic<bool> taskKeyStates[KEY_COUNT] = { }; // task
     Time lastBounceTime[KEY_COUNT] = {0}; // task
+    #endif
+    bool keyPrevStates[KEY_COUNT] = { false };
+    bool keyStates[KEY_COUNT] = { false };
+
 
     // JOYSTICK DATA ------------------------------------------------------------------
     constexpr u16 joystickLow   = 0;
@@ -40,13 +43,14 @@ namespace BinF::Engine {
     void InputTask(void* param);
 
     void InitInput() {
+        #if BINF_PLATFORM == FRI3D2024
         // init keys
         for (u8 i = 0; i < KEY_COUNT; i++)
             pinMode(KEY_PINS[i], KEY_MODES[i]);
         // init joystick
         pinMode(PIN_JOY_X, INPUT);
         pinMode(PIN_JOY_Y, INPUT);
-
+        
         // init task
         xTaskCreatePinnedToCore(
             InputTask, "InputTask",
@@ -56,7 +60,10 @@ namespace BinF::Engine {
             NULL,
             0 /* core 0 should probably be free, right? */
         );
+        #elif BINF_PLATFORM == FRI3D2026
+        expander.begin();
 
+        #endif
     }
 
     // noice!
@@ -142,8 +149,22 @@ namespace BinF::Engine {
 
         // joystick updates
         // these cannot be moved into the task, as the cost of analogRead is to big to pay for every BOUNCE_TIMEOUT
-        rawJX = ReadJoystickAveraged(PIN_JOY_X);
-        rawJY = ReadJoystickAveraged(PIN_JOY_Y);
+        rawJX = 
+        #if BINF_PLATFORM == FRI3D2024
+        ReadJoystickAveraged(PIN_JOY_X);
+        #elif BINF_PLATFORM == FRI3D2026
+        expander.getJoystickX();
+        #else
+        joystickMid;
+        #endif
+        rawJY = 
+        #if BINF_PLATFORM == FRI3D2024
+        ReadJoystickAveraged(PIN_JOY_Y);
+        #elif BINF_PLATFORM == FRI3D2026
+        expander.getJoystickY();
+        #else
+        joystickMid;
+        #endif
 
         joystickX = JoystickDigital(rawJX);
         joystickY = JoystickDigital(rawJY);
