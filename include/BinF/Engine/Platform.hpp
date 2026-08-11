@@ -16,7 +16,7 @@
 #define BINF_WARN       4
 #define BINF_ERROR      3
 #define BINF_CRITICAL   2
-#define BINF_NONE
+#define BINF_NONE       0
 
 #ifndef BINF_PLATFORM
 #error [BinF] BinF::Engine requires platform specification
@@ -24,6 +24,9 @@
 
 #ifndef BINF_LOGLEVEL
 #define BINF_LOGLEVEL BINF_INFO
+#ifndef BINF_LOGLEVEL_UNDEFINED
+#define BINF_LOGLEVEL_UNDEFINED
 #warning [BinF] No level given, defaulting to BINF_INFO
+#endif
 #endif
 
