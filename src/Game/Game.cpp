@@ -18,8 +18,6 @@ namespace BinF::Game {
             auto& settingsfile = Engine::FileSystem.GetFile(SettingsFileName);
             if (!settingsfile.IsValid()) return;
             settingsfile.~FileHandle();
-            x = Engine::screen_x/2;
-            y = Engine::screen_y/2;
         }
 
         Logger.Info("I init!!!");
@@ -27,10 +25,7 @@ namespace BinF::Game {
 
     void Update() {
         Engine::Update();
-        Engine::ClearFrame();
-        x += Engine::JoystickX()/9362;
-        y -= Engine::JoystickY()/9362;
-        Engine::DrawSprite(x, y, Miner, 32, 74);
+        Engine::DrawSprite(0, 0, TitleScreen, Engine::screen_x, Engine::screen_y);
         
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
