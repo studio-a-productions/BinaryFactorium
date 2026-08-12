@@ -36,6 +36,8 @@ The current goal is to have a single, simple world with some basic factory logic
 
 Most of the Factory Logic has already been thought about on paper, but not yet implemented. (this is what we in science call [*procrastination*](https://en.wikipedia.org/wiki/Procrastination))
 
+If you want to know the intended (& already planned) resource flow, look at [this overview](./webassets/Factorium.png). This was made with [drawio](https://www.drawio.com/).
+
 > Yes, I love pasting in links °v°
 
 ## People
