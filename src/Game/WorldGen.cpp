@@ -17,9 +17,9 @@ namespace BinF::Game {
    using Hash = u32;
     // settings
     // controls density of terrain
-    constexpr f32 TerrainScale  = 1.0f / 24.0f;
-    constexpr f32 DirtGrass     = -0.15f;
-    constexpr f32 GrassStone    = 0.15f;
+    constexpr f32 TerrainScale  = 0.016f;
+    constexpr f32 DirtGrass     = -0.6f;
+    constexpr f32 GrassStone    = 0.51f;
     constexpr u32 TerrainSalt   = 0x1000u;
 
     constexpr u32 ChunkCornerSize = ChunkSize+1;
@@ -74,9 +74,9 @@ namespace BinF::Game {
         return Engine::Lerp(nx0, nx1, sy) * 2.0f - 1.0f;
     }
 
-    // Fractal sum of Noise2D
+    // Fractal sum of Noise2D (Fractal Brownian Motion)
     static inline f32 Fbm2D(const f32 x, const f32 y,
-                            const u32 octaves = 3,
+                            const u8  octaves = 4,
                             const f32 lacunarity = 2.0f,
                             const f32 gain = 0.5f) {
         f32 sum = 0.0f, amp = 0.5f, freq = 1.0f;
@@ -215,7 +215,7 @@ namespace BinF::Game {
 
                 for (u32 i = 0; i < OreCount; i++) {
                     const OreSprite& ore = Ores[i];
-                    const f32 n = Fbm2D(wx * ore.Scale + static_cast<f32>(ore.Salt), wy * ore.Scale);
+                    const f32 n = Fbm2D(wx * ore.Scale + static_cast<f32>(ore.Salt), wy * ore.Scale, 6U);
                     if (n > ore.Threshold) {
                         tile = ore.Id;
                         break;
