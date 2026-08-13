@@ -14,6 +14,9 @@ namespace BinF {
 
 namespace BinF::Engine {
     FileSystemClass& FileSystem = *New<FileSystemClass>();
+    #if BINF_PLATFORM == FRI3D2026
+    Fri3dXP expander = Fri3dXP();
+    #endif
     void Init() {
         Serial.begin(115200);
 

@@ -25,7 +25,7 @@ namespace BinF::Game {
         for (u8 row = 0; row < ChunkSize; row++) {
             PixelOffset cx = start_cx;
             for (u8 col = 0; col < ChunkSize; col++) {
-                Engine::DrawSprite(cx, cy, TileSprites[TileSpriteIndx(WorldView[chunk].tiles[indx])], TileSize);
+                Engine::DrawSprite(cx, cy, TileSprites[TileSpriteIndx(WorldView[chunk].Tiles[indx])], TileSize);
                 indx++;
                 cx += TileSize;
             }

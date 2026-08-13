@@ -103,6 +103,7 @@ namespace BinF::Engine {
 
     // because we're not using WiFi or BT for now, we can use tasks without too many wories
     // hopefully we don't get into conflict :)
+    #if BINF_PLATFORM == FRI3D2024
     void InputTask(void* param) {
         bool keyRead = false;
         for (;;) {
@@ -126,6 +127,7 @@ namespace BinF::Engine {
             vTaskDelay(pdMS_TO_TICKS(BOUNCE_TIMEOUT));
         }
     }
+    #endif
 
     inline u16 ReadJoystickAveraged(u8 pin) {
         constexpr u8 samples = 8;
@@ -143,10 +145,19 @@ namespace BinF::Engine {
         // key transport (so we don't pay the price of atomic)
         for (u8 i = 0; i < KEY_COUNT; i++) {
             keyPrevStates[i] = keyStates[i];
+            #if BINF_PLATFORM == FRI3D2024
             keyStates[i] = taskKeyStates[i].load(std::memory_order_relaxed);
+            #endif
         }
-            
-
+        #if BINF_PLATFORM == FRI3D2026
+        keyStates[KEY_A] = expander.getButtonA();
+        keyStates[KEY_B] = expander.getButtonB();
+        keyStates[KEY_X] = expander.getButtonX();
+        keyStates[KEY_Y] = expander.getButtonY();
+        keyStates[KEY_MENU]  = expander.getButtonMenu();
+        keyStates[KEY_START] = expander.getButtonStart();
+        #endif
+        
         // joystick updates
         // these cannot be moved into the task, as the cost of analogRead is to big to pay for every BOUNCE_TIMEOUT
         rawJX = 
