@@ -5,6 +5,8 @@
 
 #include <BinF/Game/World.hpp>
 #include <BinF/Game/Camera.hpp>
+#include <BinF/Game/Assets.hpp>
+#include <BinF/Game/WorldGen.hpp>
 
 #include <BinF/Engine.hpp>
 
@@ -14,7 +16,11 @@ namespace BinF::Game {
     constexpr u8 LocalChunkAmount = 9; /* 3x3, REMEMBER: update RenderWorld when this changes */
 
 
-    ChunkData WorldView[LocalChunkAmount] = {  };
+    ChunkData WorldView[LocalChunkAmount] = { 
+        *GenerateChunk(-1, -1), *GenerateChunk(0, -1), *GenerateChunk(1, -1),
+        *GenerateChunk(-1,  0), *GenerateChunk(0,  0), *GenerateChunk(1,  0),
+        *GenerateChunk(-1,  1), *GenerateChunk(0,  1), *GenerateChunk(1,  1)
+    };
     
     // HELPERS -------------
     inline void RenderChunk(const u8 chunk, const PixelOffset start_cx, PixelOffset cy) {
@@ -25,7 +31,7 @@ namespace BinF::Game {
         for (u8 row = 0; row < ChunkSize; row++) {
             PixelOffset cx = start_cx;
             for (u8 col = 0; col < ChunkSize; col++) {
-                Engine::DrawSprite(cx, cy, TileSprites[TileSpriteIndx(WorldView[chunk].Tiles[indx])], TileSize);
+                Engine::DrawSprite(cx, cy, Tiles[TileSpriteIndx(WorldView[chunk].Tiles[indx])], TileSize);
                 indx++;
                 cx += TileSize;
             }

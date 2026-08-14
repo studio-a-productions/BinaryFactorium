@@ -32,9 +32,4 @@ namespace BinF::Game {
     inline u8 TileSpriteIndx(Tile tile) {
         return tile & 63;
     }
-    
-    // this is actually a 2D array [64][256]
-    const TileSprite TileSprites[64] = {  };
-
-
 }

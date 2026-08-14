@@ -17,7 +17,7 @@ namespace BinF::Game {
    using Hash = u32;
     // settings
     // controls density of terrain
-    constexpr f32 TerrainScale  = 0.016f;
+    constexpr f32 TerrainScale  = 0.116f;
     constexpr f32 DirtGrass     = -0.6f;
     constexpr f32 GrassStone    = 0.51f;
     constexpr u32 TerrainSalt   = 0x1000u;
@@ -98,10 +98,10 @@ namespace BinF::Game {
     // add later when all sprites are here ...
     constexpr TerrainSprites Sprites = {
         {
-
+            41, 37, 36, 34, 39, 32, 26, 29, 38, 27, 33, 28, 35, 30, 31, 25
         },
         {
-
+            25, 20, 21, 19, 22, 17, 11, 13, 23, 10, 16, 14, 18, 12, 15, 9 
         }
     };
 
@@ -113,7 +113,9 @@ namespace BinF::Game {
     };
 
     constexpr OreSprite Ores[] = {
-
+        {
+            0, 100.f, 2.f, 4
+        }
     };
 
     constexpr u32 OreCount = sizeof(Ores) / sizeof(Ores[0]);

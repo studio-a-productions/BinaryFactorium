@@ -6,11 +6,23 @@
 #include <BinF/Engine.hpp>
 #include <BinF/Game.hpp>
 #include <BinF/Game/World.hpp>
+#include <BinF/Game/Camera.hpp>
 #include <BinF/Game/Assets.hpp>
 namespace BinF::Game {
-    constexpr char SettingsFileName[] = "binf/settings.bin";
-    Engine::screen_pos x;
-    Engine::screen_pos y;
+    constexpr char SettingsFileName[]           = "binf/settings.bin";
+    constexpr Engine::screen_pos StartButtonX   = 10;
+    constexpr Engine::screen_pos StartButtonY   = 10;
+    constexpr Engine::screen_pos ConfButtonX    = 10;
+    constexpr Engine::screen_pos ConfButtonY    = 80;
+
+    enum class GameMode {
+        Start,
+        Pause,
+        Play
+    };
+
+    GameMode currentMode = GameMode::Play;
+
     void Start() {
         Engine::Init();
         if (Engine::FileSystem.State() != Engine::FSState::Bad)
@@ -22,14 +34,33 @@ namespace BinF::Game {
 
         Logger.Info("I init!!!");
     }
+    static inline void DisplayMain() {
+        static u8 buttonselect = 0;
+        
 
+    }
+
+    static inline void DisplayGame() {
+        Camera.Move(Engine::JoystickX()/8190, -(Engine::JoystickY()/8190));
+        RenderWorld();
+
+        Logger.Info("X %d.%d Y %d.%d",Camera.x, Camera.cx, Camera.y, Camera.cy);
+    }
     void Update() {
         Engine::Update();
-        Engine::DrawSprite(0, 0, TitleScreen, Engine::screen_x, Engine::screen_y);
-        
+
+        switch (currentMode) {
+            case GameMode::Start:
+                DisplayMain();
+                break;
+            case GameMode::Play:
+                DisplayGame();
+                break;
+            default: break;
+        }
+
         Engine::PushFrame();
         Logger.Info("Frametime: %u", Engine::DeltaTime());
-        Logger.Info("X (%hd), Y (%hd)", x, y);
 
     }
 
