@@ -22,15 +22,20 @@ namespace BinF::Engine {
     void InitRenderer() {
         framebuffer     = Calloc<ScreenRow>(screen_y*2, MemType::GFX);
         if (!framebuffer) {
-            Logger.Crit("(Renderer) No DMA memory!!!");
+            Logger.Crit("(Renderer) Not enough DMA memory!!!");
             return;
         }
         renderbuffer    = &framebuffer[screen_y];
         
+        #if BINF_PLATFORM == FRI3D2026
+        tft.setRotation(3);
+        #endif
         tft.init();
         tft.initDMA();
+        #if BINF_PLATFORM == FRI3D2024
         tft.writecommand(TFT_MADCTL);
         tft.writedata(TFT_MAD_BGR | TFT_MAD_MV);
+        #endif
         tft.setSwapBytes(true);
         tft.fillScreen(TFT_BLACK);
     }
@@ -165,7 +170,7 @@ namespace BinF::Engine {
         #if BINF_PLATFORM == FRI3D2024
         tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0] );
         #elif BINF_PLATFORM == FRI3D2026
-        tft.pushImageDMA( (TFT_WIDTH - screen_x)/2, (TFT_HEIGHT - screen_y)/2, screen_x, screen_y, &renderbuffer[0][0]);
+        tft.pushImageDMA( 13, 0, screen_x, screen_y, &renderbuffer[0][0] );
         #else
         #error [BinF] Engine Renderer not supported for platform
         #endif

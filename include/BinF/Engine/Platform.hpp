@@ -4,7 +4,7 @@
 */
 
 #pragma once
-
+/* BinF */
 #define BINF            0x42696E46
 
 
