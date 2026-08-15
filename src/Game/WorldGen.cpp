@@ -30,7 +30,10 @@ namespace BinF::Game {
 
     Seed WorldSeed = 0U;
 
-    void SetSeed(Seed seed) { WorldSeed = seed; }
+    void SetSeed(const Seed seed) { 
+        WorldSeed = seed; 
+        Logger.Info("World Seed: %u", WorldSeed);
+    }
 
     // normalise the hash [0, 1]
     constexpr f32 NormaliseHash(Hash h) {
@@ -137,12 +140,12 @@ namespace BinF::Game {
     static inline Terrain CorrectTerrain(const Terrain self, const Terrain up, const Terrain down, const Terrain left, const Terrain right) {
         if (self == Terrain::Dirt &&
             (up == Terrain::Stone || down == Terrain::Stone ||
-             left == Terrain::Stone || right == Terrain::Stone))
+            left == Terrain::Stone || right == Terrain::Stone))
             return Terrain::Grass;
 
         if (self == Terrain::Stone &&
             (up == Terrain::Dirt || down == Terrain::Dirt ||
-             left == Terrain::Dirt || right == Terrain::Dirt))
+            left == Terrain::Dirt || right == Terrain::Dirt))
             return Terrain::Grass;
 
         return self;
@@ -193,7 +196,10 @@ namespace BinF::Game {
         const bool hasStone = (tl == Terrain::Stone) || (tr == Terrain::Stone) || (bl == Terrain::Stone) || (br == Terrain::Stone);
 
         // diagonal check
-        if (hasDirt && hasStone) return Sprites.DirtGrass[15]; 
+        if (hasDirt && hasStone) {
+            Logger.Warn("A tile has had both dirt and stone?");
+            return Sprites.DirtGrass[15];
+        }
 
         if (hasDirt) {
             return Sprites.DirtGrass[MakeMask(tl, tr, bl, br, Terrain::Grass)];
