@@ -18,6 +18,10 @@ This project is a Factorio-inspired game for the Fri3d Badge 2024 (and maybe 202
 
 It'll be free for all to *use*, *learn*, and *install*, under the [licence](LICENCE) of this project.
 
+## TESTER INFORMATION
+
+You are testing out a stable snapshot of the development. Follow the [guide](SNAPSHOTTER.md)
+
 ## The Name
 
 Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost all its writing. If this name were to be already in use, then know Binary Factorium is not trying to impersonate whatever uses it.
