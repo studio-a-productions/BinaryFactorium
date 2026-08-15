@@ -146,7 +146,7 @@ int Fri3dXP::getJoystickY()
 {
     int result = 0;
     Wire.beginTransmission(EXPANDER_ADDRESS);
-    Wire.write(REG_JOYX);
+    Wire.write(REG_JOYY);
     Wire.endTransmission(false);
     Wire.requestFrom(EXPANDER_ADDRESS, 2);
     Wire.readBytes((char*)&result, 2);
@@ -156,7 +156,7 @@ int Fri3dXP::getJoystickX()
 {
     int result = 0;
     Wire.beginTransmission(EXPANDER_ADDRESS);
-    Wire.write(REG_JOYY);
+    Wire.write(REG_JOYX);
     Wire.endTransmission(false);
     Wire.requestFrom(EXPANDER_ADDRESS, 2);
     Wire.readBytes((char*)&result, 2);

@@ -139,7 +139,6 @@ namespace BinF::Engine {
     void UpdateInput() {
         u16 rawJX;
         u16 rawJY;
-
         // key transport (so we don't pay the price of atomic)
         for (u8 i = 0; i < KEY_COUNT; i++) {
             keyPrevStates[i] = keyStates[i];
@@ -148,6 +147,7 @@ namespace BinF::Engine {
             #endif
         }
         #if BINF_PLATFORM == FRI3D2026
+        expander.loop();
         keyStates[KEY_A] = expander.getButtonA();
         keyStates[KEY_B] = expander.getButtonB();
         keyStates[KEY_X] = expander.getButtonX();
