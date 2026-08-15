@@ -6,6 +6,7 @@
 #include <BinF/Engine.hpp>
 #include <BinF/Game.hpp>
 #include <BinF/Game/World.hpp>
+#include <BinF/Game/WorldGen.hpp>
 #include <BinF/Game/Camera.hpp>
 #include <BinF/Game/Assets.hpp>
 namespace BinF::Game {
@@ -14,6 +15,8 @@ namespace BinF::Game {
     constexpr Engine::screen_pos StartButtonY   = 10;
     constexpr Engine::screen_pos ConfButtonX    = 10;
     constexpr Engine::screen_pos ConfButtonY    = 80;
+
+    constexpr u32 JoystickSense = 000;
 
     enum class GameMode {
         Start,
@@ -31,7 +34,7 @@ namespace BinF::Game {
             if (!settingsfile.IsValid()) return;
             settingsfile.~FileHandle();
         }
-
+        SetSeed(random());
         Logger.Info("I init!!!");
     }
     static inline void DisplayMain() {
@@ -42,7 +45,10 @@ namespace BinF::Game {
 
     static inline void DisplayGame() {
         Camera.Move(Engine::JoystickX()/8190, -(Engine::JoystickY()/8190));
+        UpdateWorld();
         RenderWorld();
+
+        Engine::DrawSprite(Engine::screen_x/2-Engine::JoystickX()/7900, Engine::screen_y/2+Engine::JoystickY()/7900, Player, 16);
 
         Logger.Info("X %d.%d Y %d.%d",Camera.x, Camera.cx, Camera.y, Camera.cy);
     }

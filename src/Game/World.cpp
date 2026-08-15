@@ -14,13 +14,11 @@
 namespace BinF::Game {
     // CHUNKY DATA ---------
     constexpr u8 LocalChunkAmount = 9; /* 3x3, REMEMBER: update RenderWorld when this changes */
+    static bool WorldViewInitialized = false;
+    static WorldAxis LastCameraX = 0;
+    static WorldAxis LastCameraY = 0;
 
-
-    ChunkData WorldView[LocalChunkAmount] = { 
-        *GenerateChunk(-1, -1), *GenerateChunk(0, -1), *GenerateChunk(1, -1),
-        *GenerateChunk(-1,  0), *GenerateChunk(0,  0), *GenerateChunk(1,  0),
-        *GenerateChunk(-1,  1), *GenerateChunk(0,  1), *GenerateChunk(1,  1)
-    };
+    ChunkData WorldView[LocalChunkAmount] = { };
     
     // HELPERS -------------
     inline void RenderChunk(const u8 chunk, const PixelOffset start_cx, PixelOffset cy) {
@@ -40,9 +38,63 @@ namespace BinF::Game {
     }
 
     // yapping removed :)
-    void UpdateWorld() {
-        // NOT PRIORITY
-        // IGNORE FUNCTION FOR NOW
+    void UpdateWorld() {  
+        if (!WorldViewInitialized) {
+            u8 indx = 0;
+            for (WorldAxis dy = -1; dy <= 1; dy++) {
+                for (WorldAxis dx = -1; dx <= 1; dx++) {
+                    ChunkData* Generated = GenerateChunk(Camera.x + dx, Camera.y + dy);
+                    WorldView[indx] = *Generated;
+                    Engine::Free<ChunkData>(Generated);
+                    indx++;
+                }
+            }
+
+            LastCameraX = Camera.x;
+            LastCameraY = Camera.y;
+            WorldViewInitialized = true;
+            return;
+        }
+
+        // get out as soon as possible
+        if (Camera.x == LastCameraX && Camera.y == LastCameraY) return;
+
+        ChunkData NewView[LocalChunkAmount];
+        bool Reused[LocalChunkAmount] = {};
+
+        u8 indx = 0;
+        for (WorldAxis dy = -1; dy <= 1; dy++) {
+            for (WorldAxis dx = -1; dx <= 1; dx++) {
+                const WorldAxis TargetX = Camera.x + dx;
+                const WorldAxis TargetY = Camera.y + dy;
+
+                // Is it here already?
+                bool Found = false;
+                for (u8 old = 0; old < LocalChunkAmount; old++) {
+                    if (!Reused[old] && WorldView[old].x == TargetX && WorldView[old].y == TargetY) {
+                        NewView[indx] = WorldView[old];
+                        Reused[old] = true;
+                        Found = true;
+                        break;
+                    }
+                }
+
+                if (!Found) {
+                    ChunkData* Generated = GenerateChunk(TargetX, TargetY);
+                    NewView[indx] = *Generated;
+                    Engine::Free<ChunkData>(Generated);
+                }
+
+                indx++;
+            }
+        }
+
+        for (u8 i = 0; i < LocalChunkAmount; i++) {
+            WorldView[i] = NewView[i];
+        }
+
+        LastCameraX = Camera.x;
+        LastCameraY = Camera.y;
     }
 
     void RenderWorld() {

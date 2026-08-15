@@ -12,6 +12,8 @@ namespace BinF::Game {
     // Chunk Coordinates
     using WorldAxis = s32;
 
+    void InitWorld();
+
     // moves the world based on Camera
     void UpdateWorld();
     

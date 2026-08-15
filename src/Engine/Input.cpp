@@ -132,9 +132,7 @@ namespace BinF::Engine {
     inline u16 ReadJoystickAveraged(u8 pin) {
         constexpr u8 samples = 8;
         u32 sum = 0;
-        ReqTime();
         for (u8 i = 0; i < samples; i++) sum += analogRead(pin);
-        Logger.Info("(Input) Sample Time: %u", ReqTime());
         return sum / samples;
     }
 

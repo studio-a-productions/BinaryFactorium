@@ -22,7 +22,7 @@ namespace BinF::Game {
         cy= ncy;
     }
 
-    constexpr u32 ChunkSizePixels = ChunkSize * TileSize;
+    constexpr s32 ChunkSizePixels = ChunkSize * TileSize;
     void CameraClass::Move(const PixelOffset nx, const PixelOffset ny) {
         cx += nx;
         cy += ny;

@@ -17,9 +17,9 @@ namespace BinF::Game {
    using Hash = u32;
     // settings
     // controls density of terrain
-    constexpr f32 TerrainScale  = 0.116f;
-    constexpr f32 DirtGrass     = -0.6f;
-    constexpr f32 GrassStone    = 0.51f;
+    constexpr f32 TerrainScale  = 0.1f;
+    constexpr f32 DirtGrass     = -0.4f;
+    constexpr f32 GrassStone    = 0.31f;
     constexpr u32 TerrainSalt   = 0x1000u;
 
     constexpr u32 ChunkCornerSize = ChunkSize+1;
@@ -29,6 +29,8 @@ namespace BinF::Game {
 
 
     Seed WorldSeed = 0U;
+
+    void SetSeed(Seed seed) { WorldSeed = seed; }
 
     // normalise the hash [0, 1]
     constexpr f32 NormaliseHash(Hash h) {
@@ -114,7 +116,7 @@ namespace BinF::Game {
 
     constexpr OreSprite Ores[] = {
         {
-            0, 100.f, 2.f, 4
+            0, 0.2f, 0.f, 4
         }
     };
 
