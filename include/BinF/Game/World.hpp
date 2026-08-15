@@ -12,7 +12,7 @@ namespace BinF::Game {
     // Chunk Coordinates
     using WorldAxis = s32;
 
-    void InitWorld();
+    void RegenWorld();
 
     // moves the world based on Camera
     void UpdateWorld();

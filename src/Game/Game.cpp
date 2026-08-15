@@ -34,7 +34,7 @@ namespace BinF::Game {
             if (!settingsfile.IsValid()) return;
             settingsfile.~FileHandle();
         }
-        SetSeed(random());
+        SetSeed(esp_random());
         Logger.Info("I init!!!");
     }
     static inline void DisplayMain() {
@@ -44,7 +44,13 @@ namespace BinF::Game {
     }
 
     static inline void DisplayGame() {
-        Camera.Move(Engine::JoystickX()/8190, -(Engine::JoystickY()/8190));
+        if (Engine::ButtonPressed(Engine::KEY_B)) {
+            Camera.SetPosition(0, 0, 0, 0);
+            SetSeed(esp_random());
+            RegenWorld();
+        }
+        s32 multipli = Engine::ButtonDown(Engine::KEY_A) ? 4 : 1;
+        Camera.Move(Engine::JoystickX()/8190*multipli, -(Engine::JoystickY()/8190)*multipli);
         UpdateWorld();
         RenderWorld();
 

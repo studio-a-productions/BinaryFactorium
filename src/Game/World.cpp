@@ -19,6 +19,10 @@ namespace BinF::Game {
     static WorldAxis LastCameraY = 0;
 
     ChunkData WorldView[LocalChunkAmount] = { };
+
+    void RegenWorld() {
+        WorldViewInitialized = false;
+    }
     
     // HELPERS -------------
     inline void RenderChunk(const u8 chunk, const PixelOffset start_cx, PixelOffset cy) {
