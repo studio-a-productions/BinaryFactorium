@@ -11,6 +11,8 @@
 #define FRI3D2024       2024
 #define FRI3D2026       2026
 
+#define DESKTOP_SDL     0x53444C33
+
 #define BINF_LOG_ALL    0x69
 #define BINF_INFO       5
 #define BINF_WARN       4

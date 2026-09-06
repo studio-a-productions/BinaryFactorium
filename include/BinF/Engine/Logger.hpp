@@ -22,23 +22,7 @@ namespace BinF::Engine {
         ~LoggerClass() = default;
 
         template<typename... Args>
-        inline void Log(LogMessage fmt, LogLevel lvl, Args&&... args) {
-            LogMessage prefix = "";
-            
-            switch (lvl) {
-            case LogLevel::Info:        prefix = "[INFO]"; break;
-            case LogLevel::Warning:     prefix = "[WARN]"; break;
-            case LogLevel::Error:       prefix = "[ERROR]"; break;
-            case LogLevel::Critical:    prefix = "[CRIT]"; break;
-            }
-
-            if (lvl <= m_lvl) {
-                Serial.printf("%s ", prefix);
-                Serial.printf(fmt, std::forward<Args>(args)...);
-                Serial.printf("\n");
-            }
-        }
-
+        void Log(LogMessage fmt, LogLevel lvl, Args&&... args);
         template<typename... Args> void Crit(LogMessage fmt, Args&&... args)     { 
             #if BINF_LOGLEVEL >= BINF_CRIT  
             Log(fmt, LogLevel::Critical, std::forward<Args>(args)...); 
@@ -60,6 +44,7 @@ namespace BinF::Engine {
             #endif
         }
     private:
+
         const LogLevel m_lvl;
     };
 }

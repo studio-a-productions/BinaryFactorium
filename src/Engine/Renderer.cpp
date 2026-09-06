@@ -7,10 +7,21 @@
 #include <BinF/Engine/Renderer.hpp>
 #include <BinF/Engine/Palette.hpp>
 #include <BinF/Engine/Internal.hpp>
+
+#if BINF_PLATFORM != DESKTOP_SDL
 #include <TFT_eSPI.h>
+#else 
+#include <SDL3/SDL.h>
+#endif
 
 namespace BinF::Engine {
+    #if BINF_PLATFORM != DESKTOP_SDL
     TFT_eSPI tft = TFT_eSPI();
+    #else
+    SDL_Window*     Window      = nullptr;
+    SDL_Renderer*   Renderer    = nullptr;
+    SDL_Texture*    FrameText   = nullptr;
+    #endif
 
     using ScreenRow = colour[screen_x];
 
@@ -27,6 +38,7 @@ namespace BinF::Engine {
         }
         renderbuffer    = &framebuffer[screen_y];
         
+        #if BINF_PLATFORM != DESKTOP_SDL
         #if BINF_PLATFORM == FRI3D2026
         tft.setRotation(3);
         #endif
@@ -38,30 +50,57 @@ namespace BinF::Engine {
         #endif
         tft.setSwapBytes(true);
         tft.fillScreen(TFT_BLACK);
+        #else
+
+        // (Tommy)Init Video System
+        SDL_Init(SDL_INIT_VIDEO);
+        
+        
+        Window = SDL_CreateWindow("BinF | Desktop", screen_x, screen_y, SDL_WINDOW_RESIZABLE);
+        SDL_SetWindowMinimumSize(Window, screen_x, screen_y);
+
+        Renderer =  SDL_CreateRenderer(Window, nullptr);
+        FrameText = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, screen_x, screen_y);
+
+        SDL_SetTextureScaleMode(FrameText, SDL_SCALEMODE_PIXELART);
+        SDL_SetRenderLogicalPresentation(Renderer, screen_x, screen_y, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+        #endif
     }
     void ExitRenderer() {
+        #if BINF_PLATFORM != DESKTOP_SDL
         if (tft.dmaBusy()) tft.dmaWait();
 
         tft.deInitDMA();
+        #else
+
+        SDL_DestroyTexture(FrameText);
+        SDL_DestroyRenderer(Renderer);
+        SDL_DestroyWindow(Window);
+
+        #endif
 
         Free(framebuffer);
         Free(renderbuffer);
     }
+
+    #if BINF_PLATFORM != DESKTOP_SDL
     SPIClass& GetSPI() {
         return tft.getSPIinstance();
     }
+    #endif
 
     // HELPER FUNCTIONS --------------
     inline bool DataWithinBounds(const screen_pos x, const screen_pos y, const screen_pos sx, const screen_pos sy) {
         return ((x+sx <= screen_x) && (y+sy <= screen_y)) /* upper bounds */
                 && (x >= 0 && y >= 0);                  /* lower bounds */
     }
-    inline void SwapBuffers() {
+    inline static void SwapBuffers() {
         ScreenRow* tempbuffer = renderbuffer;
         renderbuffer = framebuffer;
         framebuffer = tempbuffer;
     }
-    inline void DrawData(const screen_pos x, const screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy) {
+    inline static void DrawData(const screen_pos x, const screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy) {
         // later add bounds checking ;-; (old, see DrawWithBoubds)
         for (screen_pos i = y; i < y+sy; i++)
             for (screen_pos j = x; j < x+sx; j++) {
@@ -70,7 +109,7 @@ namespace BinF::Engine {
                     framebuffer[i][j] = ColourPalette[stencil];
             }
     }
-    inline void DrawDataStride(const screen_pos x, screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy, const screen_pos stride) { // yes, one line diff, idc
+    inline static void DrawDataStride(const screen_pos x, screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy, const screen_pos stride) { // yes, one line diff, idc
         for (screen_pos i = y; i < y+sy; i++) {
             for (screen_pos j = x; j < x+sx; j++) {
                 colourID stencil = *(data++);
@@ -161,23 +200,45 @@ namespace BinF::Engine {
     }
 
     void PushFrame() {
+        #if BINF_PLATFORM != DESKTOP_SDL
         // aparently pushImageDMA does this, but if we want our own logic, then this is prob good to do manually
         if (tft.dmaBusy()) tft.dmaWait();
         tft.endWrite();
+        #endif
+
         // Newton's Negative Fourth law
         SwapBuffers();
+
+        #if BINF_PLATFORM != DESKTOP_SDL
         tft.startWrite();
+        #endif
+        
         #if BINF_PLATFORM == FRI3D2024
         tft.pushImageDMA( 0, 0, screen_x, screen_y, &renderbuffer[0][0] );
         #elif BINF_PLATFORM == FRI3D2026
         tft.pushImageDMA( 13, 0, screen_x, screen_y, &renderbuffer[0][0] );
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        
+        SDL_UpdateTexture(FrameText, nullptr, &renderbuffer[0][0], screen_x * sizeof(colour));
+        
+        // Drawnion Particle
+        SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+        SDL_RenderClear(Renderer);
+
+        SDL_RenderTexture(Renderer, FrameText, nullptr, nullptr);
+        SDL_RenderPresent(Renderer);
+
+
         #else
         #error [BinF] Engine Renderer not supported for platform
         #endif
+
     }
 
     void WaitForSPI() {
+        #if BINF_PLATFORM != DESKTOP_SDL
         tft.endWrite();
+        #endif  
     }
     
 }

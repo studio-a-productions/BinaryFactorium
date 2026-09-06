@@ -22,6 +22,34 @@ namespace BinF::Engine {
     
     std::atomic<bool> taskKeyStates[KEY_COUNT] = { }; // task
     Time lastBounceTime[KEY_COUNT] = {0}; // task
+    #elif BINF_PLATFORM == DESKTOP_SDL
+    SDL_Gamepad* Gamepad = nullptr;
+    constexpr SDL_Scancode KEY_SCANCODES[KEY_COUNT] = {
+        SDL_SCANCODE_Q, SDL_SCANCODE_E, SDL_SCANCODE_Z,
+        SDL_SCANCODE_X, SDL_SCANCODE_ESCAPE, SDL_SCANCODE_RETURN
+    };
+    constexpr SDL_GamepadButton KEY_PADBUTTONS[KEY_COUNT] = {
+        SDL_GAMEPAD_BUTTON_SOUTH, SDL_GAMEPAD_BUTTON_EAST, SDL_GAMEPAD_BUTTON_WEST,
+        SDL_GAMEPAD_BUTTON_NORTH, SDL_GAMEPAD_BUTTON_BACK, SDL_GAMEPAD_BUTTON_START
+    };
+
+    static inline void RefreshGamepad() {
+        if (Gamepad && !SDL_GamepadConnected(Gamepad)) { SDL_CloseGamepad(Gamepad); Gamepad = nullptr; }
+        if (!Gamepad) {
+            int count = 0;
+            SDL_JoystickID* ids = SDL_GetGamepads(&count);
+            if (ids && count > 0) Gamepad = SDL_OpenGamepad(ids[0]);
+            if (ids) SDL_free(ids);
+        }
+    }
+
+    static inline s16 ApplyDeadzone(s16 raw) {
+        if (abs(raw) <= joystickDeadzone) return 0;
+        return (raw > 0)
+            ? static_cast<s16>((static_cast<s32>(raw - joystickDeadzone) * joystickDigitalH) / (joystickDigitalH - joystickDeadzone))
+            : static_cast<s16>((static_cast<s32>(raw + joystickDeadzone) * joystickDigitalL) / (joystickDigitalL + joystickDeadzone));
+    }
+
     #endif
     bool keyPrevStates[KEY_COUNT] = { false };
     bool keyStates[KEY_COUNT] = { false };
@@ -63,6 +91,9 @@ namespace BinF::Engine {
         #elif BINF_PLATFORM == FRI3D2026
         expander.begin();
 
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_InitSubSystem(SDL_INIT_GAMEPAD);
+        RefreshGamepad();
         #endif
     }
 
@@ -85,6 +116,7 @@ namespace BinF::Engine {
         return joystickY;
     }
 
+    #if BINF_PLATFORM != DESKTOP_SDL
     inline s16 JoystickDigital(u16 raw) {
         s16 digiDat = map(raw, joystickLow, joystickHigh, joystickDigitalL, joystickDigitalH);
 
@@ -100,6 +132,7 @@ namespace BinF::Engine {
                 (static_cast<s32>(digiDat + joystickDeadzone)*joystickDigitalL) / (joystickDigitalL + joystickDeadzone)
             );
     }
+    #endif
 
     // because we're not using WiFi or BT for now, we can use tasks without too many wories
     // hopefully we don't get into conflict :)
@@ -127,7 +160,7 @@ namespace BinF::Engine {
             vTaskDelay(pdMS_TO_TICKS(BOUNCE_TIMEOUT));
         }
     }
-    #endif
+    
 
     inline u16 ReadJoystickAveraged(u8 pin) {
         constexpr u8 samples = 8;
@@ -135,15 +168,24 @@ namespace BinF::Engine {
         for (u8 i = 0; i < samples; i++) sum += analogRead(pin);
         return sum / samples;
     }
+    #endif
 
     void UpdateInput() {
+        #if BINF_PLATFORM != DESKTOP_SDL
         u16 rawJX;
         u16 rawJY;
+        #endif  
         // key transport (so we don't pay the price of atomic)
         for (u8 i = 0; i < KEY_COUNT; i++) {
             keyPrevStates[i] = keyStates[i];
             #if BINF_PLATFORM == FRI3D2024
             keyStates[i] = taskKeyStates[i].load(std::memory_order_relaxed);
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            const bool* keyboard = SDL_GetKeyboardState(nullptr);
+            bool down = keyboard[KEY_SCANCODES[i]];
+            if (Gamepad) down = (down || SDL_GetGamepadButton(Gamepad, KEY_PADBUTTONS[i]));
+
+            keyStates[i] = down;
             #endif
         }
         #if BINF_PLATFORM == FRI3D2026
@@ -154,28 +196,49 @@ namespace BinF::Engine {
         keyStates[KEY_Y] = expander.getButtonY();
         keyStates[KEY_MENU]  = expander.getButtonMenu();
         keyStates[KEY_START] = expander.getButtonStart();
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_PumpEvents();
+        RefreshGamepad();
         #endif
         
         // joystick updates
         // these cannot be moved into the task, as the cost of analogRead is to big to pay for every BOUNCE_TIMEOUT
-        rawJX = 
-        #if BINF_PLATFORM == FRI3D2024
-        ReadJoystickAveraged(PIN_JOY_X);
-        #elif BINF_PLATFORM == FRI3D2026
-        expander.getJoystickX();
+        #if BINF_PLATFORM == DESKTOP_SDL
+        joystickX = 0;
+        joystickY = 0;
+        const bool* keyboard = SDL_GetKeyboardState(nullptr);
+        if (Gamepad) {
+           /* poll first this */
+            
+            joystickX = ApplyDeadzone(SDL_GetGamepadAxis(Gamepad, SDL_GAMEPAD_AXIS_LEFTX));
+            joystickY = ApplyDeadzone(SDL_GetGamepadAxis(Gamepad, SDL_GAMEPAD_AXIS_LEFTY));
+        }
+        joystickX = (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) ? joystickDigitalH
+            : (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) ? joystickDigitalL : joystickX;
+        joystickY = (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) ? joystickDigitalH
+            : (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) ? joystickDigitalL : joystickY;
+        
         #else
-        joystickMid;
+        rawJX = 
+            #if BINF_PLATFORM == FRI3D2024
+            ReadJoystickAveraged(PIN_JOY_X);
+            #elif BINF_PLATFORM == FRI3D2026
+            expander.getJoystickX();
+            #else
+            joystickMid;
         #endif
         rawJY = 
-        #if BINF_PLATFORM == FRI3D2024
-        ReadJoystickAveraged(PIN_JOY_Y);
-        #elif BINF_PLATFORM == FRI3D2026
-        expander.getJoystickY();
-        #else
-        joystickMid;
+            #if BINF_PLATFORM == FRI3D2024
+            ReadJoystickAveraged(PIN_JOY_Y);
+            #elif BINF_PLATFORM == FRI3D2026
+            expander.getJoystickY();
+            #else
+            joystickMid;
         #endif
 
         joystickX = JoystickDigital(rawJX);
         joystickY = JoystickDigital(rawJY);
+
+        #endif
     }
 }

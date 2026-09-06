@@ -4,8 +4,14 @@
 */
 
 #pragma once
+#include <BinF/Engine/Platform.hpp>
 
+#if BINF_PLATFORM != DESKTOP_SDL
 #include <Arduino.h>
+#else
+#include <stddef.h>
+#include <stdint.h>
+#endif
 
 namespace BinF {
 
