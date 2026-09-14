@@ -8,6 +8,10 @@
 #include "common.hpp"
 #include "Logger.hpp"
 
+#if BINF_PLATFORM == DESKTOP_SDL
+#include <SDL3/SDL_stdinc.h>
+#endif
+
 namespace BinF::Engine {
     enum class MemType : BinF::u8 {
         GFX,
@@ -17,6 +21,7 @@ namespace BinF::Engine {
         STD
     };
 
+    #if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
     inline u32 MemCaps(const MemType type) {
         switch (type) {
             case MemType::GFX:      return  MALLOC_CAP_DMA;
@@ -29,10 +34,19 @@ namespace BinF::Engine {
                 return MALLOC_CAP_SPIRAM;
         }
     }
+    #endif
 
     template<typename T>
     inline T* Malloc(const u32 count, const MemType type=MemType::STD) {
-        return static_cast<T*>(heap_caps_malloc(count*sizeof(T), MemCaps(type)));
+        
+        return static_cast<T*>(
+            #if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
+            heap_caps_malloc(count*sizeof(T), MemCaps(type))
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_malloc(count*sizeof(T))
+            #endif
+        );
+
     }
     template<typename T>
     inline T* Malloc(const MemType type=MemType::STD) {
@@ -40,15 +54,33 @@ namespace BinF::Engine {
     }
     template<typename T>
     inline T* Calloc(const u32 n=1U, const MemType type=MemType::STD) {
-        return static_cast<T*>(heap_caps_calloc(n, sizeof(T), MemCaps(type)));
+        
+        return static_cast<T*>(
+            #if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
+            heap_caps_calloc(n, sizeof(T), MemCaps(type))
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_calloc(n, sizeof(T))
+            #endif
+        );
     }
     template<typename T>
     inline T* Realloc(T* ptr, u32 count, const MemType type=MemType::STD) {
-        return static_cast<T*>(heap_caps_realloc(ptr, count*sizeof(T), MemCaps(type)));
+        return static_cast<T*>(
+            #if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
+            heap_caps_realloc(ptr, count*sizeof(T), MemCaps(type))
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_realloc(ptr, count*sizeof(T))
+            #endif
+        );
     }
     template<typename T> /* just so you can call "Free<>()" */
     inline void Free(T* ptr) {
+        #if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
         heap_caps_free(ptr);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_free(ptr);
+        #endif
+
     }
 
 

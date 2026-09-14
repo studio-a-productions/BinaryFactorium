@@ -27,8 +27,7 @@
 
 #ifndef BINF_LOGLEVEL
 #define BINF_LOGLEVEL BINF_INFO
-#ifndef BINF_LOGLEVEL_UNDEFINED
-#define BINF_LOGLEVEL_UNDEFINED
+#ifndef BINF_NOWARNS
 #warning [BinF] No level given, defaulting to BINF_INFO
 #endif
 #endif

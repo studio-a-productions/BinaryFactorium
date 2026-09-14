@@ -42,6 +42,7 @@ target_include_directories(BinaryFactorium PUBLIC
 
 target_compile_definitions(BinaryFactorium PRIVATE 
     BINF_PLATFORM=DESKTOP_SDL
+    BINF_NOWARNS
 )
 
 target_link_libraries(BinaryFactorium PRIVATE SDL3::SDL3)
