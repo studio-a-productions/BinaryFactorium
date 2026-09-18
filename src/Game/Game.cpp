@@ -15,6 +15,7 @@ namespace BinF::Game {
     constexpr Engine::screen_pos StartButtonY   = 10;
     constexpr Engine::screen_pos ConfButtonX    = 10;
     constexpr Engine::screen_pos ConfButtonY    = 80;
+    constexpr Engine::Time TargetMS             = 30;
 
     constexpr u32 JoystickSense = 000;
     bool Running = true;
@@ -72,7 +73,8 @@ namespace BinF::Game {
         }
 
         Engine::PushFrame();
-        Logger.Info("Frametime: %u", Engine::DeltaTime());
+        
+        if (Engine::DeltaTime() < TargetMS) Engine::Wait(TargetMS-Engine::DeltaTime());
 
     }
 
