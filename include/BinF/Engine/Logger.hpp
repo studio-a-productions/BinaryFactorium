@@ -5,6 +5,9 @@
 #pragma once
 
 #include "common.hpp"
+#if BINF_PLATFORM == DESKTOP_SDL
+#include <SDL3/SDL_log.h>
+#endif
 
 namespace BinF::Engine {
     using LogMessage = const char*;
@@ -22,7 +25,29 @@ namespace BinF::Engine {
         ~LoggerClass() = default;
 
         template<typename... Args>
-        void Log(LogMessage fmt, LogLevel lvl, Args&&... args);
+        void Log(LogMessage fmt, LogLevel lvl, Args&&... args) {
+            LogMessage prefix = "";
+
+            switch (lvl) {
+                case LogLevel::Info:        prefix = "[INFO]"; break;
+                case LogLevel::Warning:     prefix = "[WARN]"; break;
+                case LogLevel::Error:       prefix = "[ERROR]"; break;
+                case LogLevel::Critical:    prefix = "[CRIT]"; break;
+            }
+
+            if (lvl <= m_lvl) {
+            #if BINF_PLATFORM != DESKTOP_SDL
+                Serial.printf("%s ", prefix);
+                Serial.printf(fmt, std::forward<Args>(args)...);
+                Serial.printf("\n");
+            #else 
+                char fullFmt[1024];
+                snprintf(fullFmt, sizeof(fullFmt), "%s %s", prefix, fmt);
+                SDL_Log(fullFmt, std::forward<Args>(args)...);
+            #endif
+            }
+        }
+        
         template<typename... Args> void Crit(LogMessage fmt, Args&&... args)     { 
             #if BINF_LOGLEVEL >= BINF_CRIT  
             Log(fmt, LogLevel::Critical, std::forward<Args>(args)...); 

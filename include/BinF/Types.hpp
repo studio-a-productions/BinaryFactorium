@@ -27,6 +27,11 @@ namespace BinF {
     using s16 = int16_t;
     using s8  = int8_t;
 
+    #if BINF_PLATFORM == DESKTOP_SDL
+    typedef float float_t;
+    typedef double double_t;
+    #endif
+    
     using f32 = float_t;
     using f64 = double_t;
 

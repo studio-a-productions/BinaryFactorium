@@ -5,25 +5,64 @@
 #include <BinF/Engine.hpp>
 #include <BinF/Engine/Internal.hpp>
 #include <BinF/Engine/FileSystem.hpp>
-#include <Fri3d/Badge_pins.h>
+#include <Fri3d.h>
+#if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
 #include <SPI.h>
 #include <SD.h>
+#elif BINF_PLATFORM == DESKTOP_SDL
+#include <SDL3/SDL.h>
+#endif
 
-
+// TODO: make rename actually move files
 
 namespace BinF::Engine {
     constexpr FilePath TableFileName = "/table.bff";
-
+    static char* TruePathName = Calloc<char>(MaxFileName);
     using FileName = char[FILENAME_MAX];
     
     FileHandle InvalidFile = FileHandle();
 
-    inline FSResult 
+    static inline FSResult 
     CouldNotCreate(FilePath path) {
         Logger.Error("(FileSys) Couldn't Create %s", path);
         return FSResult::IOError;
     }
 
+    #if BINF_PLATFORM == DESKTOP_SDL
+    static char BasePath[512] = { 0 };
+    static char* TruePathNameA  = nullptr;
+    static char* TruePathNameB  = nullptr;
+
+    static inline FilePath TruePath(FilePath path, char* buf=TruePathNameA) {
+        snprintf(buf, MaxFileName + strlen(BasePath) + 1, "%s%s", BasePath, path + 1);
+        return buf;
+    }
+
+    static inline bool EnsureFileExists(FilePath realPath) {
+        char dir[MaxFileName + sizeof(BasePath)];
+        strncpy(dir, realPath, sizeof(dir) - 1);
+        dir[sizeof(dir) - 1] = '\0';
+
+        char* lastSlash = strrchr(dir, '/');
+        if (lastSlash) {
+            *lastSlash = '\0';
+            if (dir[0] && !SDL_CreateDirectory(dir)) {
+                Logger.Error("(FileSys) Couldn't create directory %s: %s", dir, SDL_GetError());
+                return false;
+            }
+        }
+
+        if (!SDL_GetPathInfo(realPath, nullptr)) {
+            SDL_IOStream* create = SDL_IOFromFile(realPath, "wb");
+            if (!create) {
+                Logger.Error("(FileSys) Couldn't create %s: %s", realPath, SDL_GetError());
+                return false;
+            }
+            SDL_CloseIO(create);
+        }
+        return true;
+    }
+    #endif
 
     // FileHandle Impl ---------------------------------
     FileHandle::~FileHandle() {
@@ -73,17 +112,46 @@ namespace BinF::Engine {
     }
 
     FSState FileSystemClass::Begin() {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
         m_Impl.Buffer = Calloc<char>(MaxFileSize, MemType::External);
         if (!m_Impl.Buffer) {
             Logger.Crit("(FileSys) Failed to allocate buffer of size %u (bytes)", sizeof(char)*MaxFileSize);
             return Bad();
         }
-
-        if (!SD.begin(PIN_SDCARD_CS, GetSPI(), SPI_FREQUENCY, "/sd", MaxFiles, true)) {
-            Logger.Crit("(FileSys) Failed to init SD");
+        
+        if (
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            !SD.begin(PIN_SDCARD_CS, GetSPI(), SPI_FREQUENCY, "/sd", MaxFiles, true)
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            false
+            #else
+            true
+            #error (BinF::Engine::FileSys) FileSys not implimented for platform
+            #endif
+        ) {
+            Logger.Crit("(FileSys) Failed to init FileSystem");
             return Bad();
         }
+
+        #if BINF_PLATFORM == DESKTOP_SDL
+        char* pref = SDL_GetPrefPath("BinaryFactorium", "Game");
+        if (!pref) {
+            Logger.Crit("(FileSys) Failed to resolve app data directory: %s", SDL_GetError());
+            return Bad();
+        }
+        strncpy(BasePath, pref, sizeof(BasePath) - 1);
+        SDL_free(pref); // not Free since we never made it
+
+        const u32 pathBufSize = MaxFileName + strlen(BasePath) + 1;
+        TruePathNameA = Calloc<char>(pathBufSize);
+        TruePathNameB = Calloc<char>(pathBufSize);
+        if (!TruePathNameA || !TruePathNameB) {
+            Logger.Crit("(FileSys) Failed to allocate path buffers");
+            return Bad();
+        }
+        #endif
 
         m_State = FSState::Good;
         return FSState::Good;
@@ -92,12 +160,24 @@ namespace BinF::Engine {
     FSState FileSystemClass::State() const { return m_State; }
 
     FileID FileSystemClass::NewFileID(FilePath path) {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
         if (path && PathValid(path))
         for (u16 i = 0; i < MaxOpenFiles; i++) {
             if (m_Impl.FileNames[i][0] == '\0') {
                 strcpy(&m_Impl.FileNames[i][0], path);
-                m_Impl.Files[i] = SD.open(path, FILE_READ, !SD.exists(path));
+
+                #if BINF_PLATFORM == DESKTOP_SDL
+                if (!FileExists(path)) EnsureFileExists(TruePath(path));
+                #endif
+
+                m_Impl.Files[i] = 
+                    #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+                    SD.open(path, FILE_READ, !SD.exists(path));
+                    #elif BINF_PLATFORM == DESKTOP_SDL
+                        SDL_IOFromFile(TruePath(path), "rb");
+                    #endif
                 return i+1;
             }
         }
@@ -128,76 +208,178 @@ namespace BinF::Engine {
 
     bool FileSystemClass::FileExists(FilePath path) const {
         if (!PathValid(path)) return false;
+        
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
-        return SD.exists(path);
+        #endif
+        return 
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            SD.exists(path);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetPathInfo(TruePath(path), nullptr);
+        #endif
     }
 
     FSResult FileSystemClass::FreeID(FileID id) {
         if (!IdValid(id--))
             return FSResult::NotFound;
         m_Impl.FileNames[id][0] = '\0';
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
-        if (m_Impl.Files[id]) m_Impl.Files[id].close();
+        #endif
+        if (m_Impl.Files[id]) 
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            m_Impl.Files[id].close();
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            {
+                SDL_CloseIO(m_Impl.Files[id]);
+                m_Impl.Files[id] = nullptr;
+            }
+            #endif
         return FSResult::Ok;
     }
 
     u32 FileSystemClass::FileSize(FilePath path) const {
         if (!PathValid(path)) return 0U;
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
         File t_File=SD.open(path);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_IOStream* t_File = SDL_IOFromFile(TruePath(path), "rb");
+        #endif
+
         if (!t_File) return 0U;
-        u32 t_siz = t_File.size();
+
+        
+        u32 t_siz = 
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            t_File.size();
         t_File.close();
+        #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetIOSize(t_File);
+        SDL_CloseIO(t_File);
+        #endif
         return t_siz;
     }
 
     u32 FileSystemClass::FileSize(FileID id) const {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
         if (IdValid(id--))
-            return m_Impl.Files[id].size();
+            return 
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            m_Impl.Files[id].size();
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetIOSize(m_Impl.Files[id]);
+            #endif
         else return 0U;
     }
 
     FSResult FileSystemClass::ReadFile(FileID id, void* dest, u32 size, const u32 offset) {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
         if (!IdValid(id--)) return FSResult::NotFound;
-        if (!size) size = offset ? m_Impl.Files[id].size() - offset : m_Impl.Files[id].size();
+        if (!size) size = offset ? 
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            m_Impl.Files[id].size() 
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetIOSize(m_Impl.Files[id])
+            #endif
+            - offset : 
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            m_Impl.Files[id].size() 
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetIOSize(m_Impl.Files[id])
+            #endif
+            ;
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         if (!m_Impl.Files[id].available()) return FSResult::IOError;
         m_Impl.Files[id].seek(offset);
         m_Impl.Files[id].read((u8*)dest, size);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_SeekIO(m_Impl.Files[id], offset, SDL_IO_SEEK_SET);
+        SDL_ReadIO(m_Impl.Files[id], dest, size);
+        #endif
         return FSResult::Ok;
     }
 
     FSResult FileSystemClass::WriteFile(FileID id, const void* data, u32 size, u32 offset) {
         if (!IdValid(id--)) return FSResult::NotFound;
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
-        if (!size) size = offset ? m_Impl.Files[id].size() - offset : m_Impl.Files[id].size();
+        #endif
+
+        if (!size) size = offset ? 
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+                m_Impl.Files[id].size()
+            #elif BINF_PLATFORM == DESKTOP_SDL
+                SDL_GetIOSize(m_Impl.Files[id])
+            #endif
+            - offset :
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+                m_Impl.Files[id].size();
+            #elif BINF_PLATFORM == DESKTOP_SDL
+                SDL_GetIOSize(m_Impl.Files[id]);
+            #endif
+
+
         if (size+offset > MaxFileSize) return FSResult::NoSpace;
+        
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         m_Impl.Files[id].close();
         m_Impl.Files[id] = SD.open(m_Impl.FileNames[id], FILE_WRITE);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_CloseIO(m_Impl.Files[id]);
+        m_Impl.Files[id] = SDL_IOFromFile(TruePath(m_Impl.FileNames[id]), "r+b");
+        #endif
+        
         // error checks
         if (!m_Impl.Files[id]) return FSResult::IOError;
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026    
         if (!m_Impl.Files[id].availableForWrite()) {
             m_Impl.Files[id].close();
             Bad();
             return FSResult::IOError;
         }
+        #endif
         FSResult res = FSResult::Ok;
+
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         m_Impl.Files[id].seek(offset);
         if (m_Impl.Files[id].write((const u8*)data, size) != size) {
             Logger.Error("(FileSys) Write Error '%d'", m_Impl.Files[id].getWriteError());
             res = FSResult::IOError;
         }
-
         m_Impl.Files[id].close();
         m_Impl.Files[id] = SD.open(m_Impl.FileNames[id]);
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_SeekIO(m_Impl.Files[id], offset, SDL_IO_SEEK_SET);
+        if (SDL_WriteIO(m_Impl.Files[id], data, size) != size) {
+            Logger.Error("(FileSys) Write Error '%s'", SDL_GetError());
+            res = FSResult::IOError;
+        }
+        SDL_CloseIO(m_Impl.Files[id]);
+        m_Impl.Files[id] = SDL_IOFromFile(TruePath(m_Impl.FileNames[id]), "rb");
+        #endif
+
+        
         return m_Impl.Files[id] ? res : FSResult::IOError;
     }
 
     FSResult FileSystemClass::RenameFile(FileID id, FilePath path) {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
         if (!IdValid(id--)) return FSResult::NotFound;
-        if (!SD.rename(m_Impl.FileNames[id], path)) {
+        if (
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            !SD.rename(m_Impl.FileNames[id], path)
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            !SDL_RenamePath(TruePath(m_Impl.FileNames[id]), TruePath(path, TruePathNameB))
+            #endif
+        ) {
             Bad();
             return FSResult::IOError;
         }
@@ -209,10 +391,24 @@ namespace BinF::Engine {
 
     FSResult FileSystemClass::DeleteFile(FileID id) {
         if (!IdValid(id--)) return FSResult::NotFound;
+        
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
-        if (m_Impl.Files[id]) m_Impl.Files[id].close();
+        #endif
 
+        if (m_Impl.Files[id]) 
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            m_Impl.Files[id].close();
         SD.remove(m_Impl.FileNames[id]);
+        
+        #elif BINF_PLATFORM == DESKTOP_SDL
+            {
+                SDL_CloseIO(m_Impl.Files[id]);
+                m_Impl.Files[id] = nullptr;
+            }
+        SDL_RemovePath(TruePath(m_Impl.FileNames[id]));
+        #endif
+            
 
         return FreeID(++id);
     }
@@ -224,9 +420,19 @@ namespace BinF::Engine {
     }
 
     FileHandle& FileSystemClass::CreateFile(FilePath path, u32 size) {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         WaitForSPI();
+        #endif
+
         /* This is an invalid opperation! */
-        if (SD.exists(path)) return InvalidFile;
+        if (
+            #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+            SD.exists(path)
+            #elif BINF_PLATFORM == DESKTOP_SDL
+            SDL_GetPathInfo(TruePath(path), nullptr)
+            #endif
+        ) return InvalidFile;
+
         const auto newid = GetFileID(path);
         if (newid == FileInvalid) return InvalidFile;
         return *New<FileHandle>(*this, newid);

@@ -10,4 +10,6 @@
 #if BINF_PLATFORM == DESKTOP_SDL
 #include <stdio.h>
 #include <stddef.h>
+#include <math.h>
+#include <utility>
 #endif

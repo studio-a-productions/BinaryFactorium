@@ -236,9 +236,11 @@ namespace BinF::Engine {
     }
 
     void WaitForSPI() {
-        #if BINF_PLATFORM != DESKTOP_SDL
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         tft.endWrite();
-        #endif  
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
+        #endif
     }
     
 }

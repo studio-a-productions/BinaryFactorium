@@ -1,13 +1,18 @@
-/*
-    Copyright (c) 2026 BinF Developers
-    Licensed under the Apache License, Version 2.0
-*/
+#include <BinF/Engine.hpp>
 
-#include <BinF/Engine/Math.hpp>
+#if BINF_PLATFORM == DESKTOP_SDL
+#include <SDL3/SDL_stdinc.h>
+#elif BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+#include <Arduino.h>
+#endif
 
 namespace BinF::Engine {
-    template <typename T>
-    T Clamp(T val, T min, T max) {
-        return (val < min ? min : (val > max ? max : val));
+    u32 Random() {
+        #if BINF_PLATFORM == DESKTOP_SDL
+        SDL_srand(SDL_rand(u16m));
+        return static_cast<u32>(SDL_rand(u16m));
+        #elif BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+        return esp_random();
+        #endif
     }
 }

@@ -43,14 +43,8 @@ namespace BinF::Engine {
         }
     }
 
-    static inline s16 ApplyDeadzone(s16 raw) {
-        if (abs(raw) <= joystickDeadzone) return 0;
-        return (raw > 0)
-            ? static_cast<s16>((static_cast<s32>(raw - joystickDeadzone) * joystickDigitalH) / (joystickDigitalH - joystickDeadzone))
-            : static_cast<s16>((static_cast<s32>(raw + joystickDeadzone) * joystickDigitalL) / (joystickDigitalL + joystickDeadzone));
-    }
-
     #endif
+    
     bool keyPrevStates[KEY_COUNT] = { false };
     bool keyStates[KEY_COUNT] = { false };
 
@@ -64,9 +58,22 @@ namespace BinF::Engine {
     constexpr s16 joystickDigitalH  = 32767;
     constexpr s16 joystickDeadzone  = joystickDigitalH/2;
 
-
+    
     s16 joystickX = 0;
     s16 joystickY = 0;
+    
+    bool exitRequested = false;
+    bool ShouldExit() { return exitRequested; }
+    
+    #if BINF_PLATFORM == DESKTOP_SDL
+    static inline s16 ApplyDeadzone(s16 raw) {
+        if (abs(raw) <= joystickDeadzone) return 0;
+        return (raw > 0)
+            ? static_cast<s16>((static_cast<s32>(raw - joystickDeadzone) * joystickDigitalH) / (joystickDigitalH - joystickDeadzone))
+            : static_cast<s16>((static_cast<s32>(raw + joystickDeadzone) * joystickDigitalL) / (joystickDigitalL + joystickDeadzone));
+    }
+    #endif
+
 
     void InputTask(void* param);
 
@@ -197,8 +204,13 @@ namespace BinF::Engine {
         keyStates[KEY_MENU]  = expander.getButtonMenu();
         keyStates[KEY_START] = expander.getButtonStart();
         #elif BINF_PLATFORM == DESKTOP_SDL
-        SDL_PumpEvents();
-        RefreshGamepad();
+        SDL_Event ev;
+        while (SDL_PollEvent(&ev)) {
+            if (ev.type == SDL_EVENT_QUIT) exitRequested = true;
+            if (ev.type == SDL_EVENT_GAMEPAD_ADDED 
+                || ev.type == SDL_EVENT_GAMEPAD_REMOVED)
+                RefreshGamepad();
+}
         #endif
         
         // joystick updates
@@ -239,6 +251,14 @@ namespace BinF::Engine {
         joystickX = JoystickDigital(rawJX);
         joystickY = JoystickDigital(rawJY);
 
+        #endif
+    }
+
+
+    void ExitInput() {
+        #if BINF_PLATFORM
+            if (Gamepad) { SDL_CloseGamepad(Gamepad); Gamepad = nullptr; }
+            SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
         #endif
     }
 }

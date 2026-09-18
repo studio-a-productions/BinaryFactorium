@@ -5,11 +5,19 @@
 
 #ifndef X_BINF_DEVCOMMON_INCLUDED
 #define X_BINF_DEVCOMMON_INCLUDED
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <Arduino.h>
-
+#include <stdint.h>
+#include <string.h>
+#include <stdbool.h>
 
 typedef void (*BinFCallback)(int);
 typedef void* (*BinFAlloc)(const size_t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

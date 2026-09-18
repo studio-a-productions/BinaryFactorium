@@ -17,12 +17,12 @@
 
 namespace BinF::Engine {
     // RESOURCE MANAGER
-    void Init();    // init engine systems
-    void Update();  // update engine systems (normally once per loop())
-    void Exit();    // free engine alloc resources (reserved for potential desktop)
+    void Init();                                // init engine systems
+    void Update();                              // update engine systems (normally once per loop())
+    void Exit();   // free engine alloc resources (reserved for potential desktop)
 
     // RENDER SYSTEM
-    void ClearFrame(const colour col = black); // clear frame buffer (optional)
+    void ClearFrame(const colour col = black);  // clear frame buffer (optional)
     void DrawSprite(const SpritePos&, const SpriteData&);
     void DrawSprite(screen_pos x, screen_pos y, const SpriteData&); // manual sprite pos
     void DrawSprite(screen_pos x, screen_pos y, const colourID* sprite, screen_pos s); // s is the size of both axis
@@ -44,6 +44,8 @@ namespace BinF::Engine {
     Time ReqTime();             // time since last ReqTime() or since Update()
     void Wait(Time);            // Wait ms
     Time GetTime();             // Get curent ms since launch (may wrap)
+
+    bool ShouldExit();
 
     struct StatusStruct { 
         bool SDInserted;

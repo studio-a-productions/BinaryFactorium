@@ -6,7 +6,13 @@
 #pragma once
 
 #include "common.hpp"
+#if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
 #include <SD.h>
+#elif BINF_PLATFORM == DESKTOP_SDL
+// I love porting
+#include <SDL3/SDL_filesystem.h>
+#include <SDL3/SDL_iostream.h>
+#endif
 
 namespace BinF::Engine {
     // a number representing an active file within a FS
@@ -47,7 +53,11 @@ namespace BinF::Engine {
 
     struct FileSysImpl {
         char FileNames[MaxOpenFiles][FILENAME_MAX];
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         File Files[MaxOpenFiles];
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_IOStream* Files[MaxOpenFiles] = { nullptr };
+        #endif
         char* Buffer;
     };
 

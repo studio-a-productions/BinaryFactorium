@@ -17,7 +17,7 @@ namespace BinF::Game {
     constexpr Engine::screen_pos ConfButtonY    = 80;
 
     constexpr u32 JoystickSense = 000;
-
+    bool Running = true;
     enum class GameMode {
         Start,
         Pause,
@@ -34,7 +34,7 @@ namespace BinF::Game {
             if (!settingsfile.IsValid()) return;
             settingsfile.~FileHandle();
         }
-        SetSeed(esp_random());
+        SetSeed(Engine::Random());
         Logger.Info("I init!!!");
     }
     static inline void DisplayMain() {
@@ -46,7 +46,7 @@ namespace BinF::Game {
     static inline void DisplayGame() {
         if (Engine::ButtonPressed(Engine::KEY_B)) {
             Camera.SetPosition(0, 0, 0, 0);
-            SetSeed(esp_random());
+            SetSeed(Engine::Random());
             RegenWorld();
         }
         s32 multipli = Engine::ButtonDown(Engine::KEY_A) ? 4 : 1;

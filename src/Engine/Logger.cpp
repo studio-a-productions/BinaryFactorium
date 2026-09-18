@@ -16,28 +16,4 @@ namespace BinF::Engine {
         }
 
     }
-    template<typename... Args>
-    void LoggerClass::Log(LogMessage fmt, LogLevel lvl, Args&&... args) {
-        LogMessage prefix = "";
-
-        switch (lvl) {
-        case LogLevel::Info:        prefix = "[INFO]"; break;
-        case LogLevel::Warning:     prefix = "[WARN]"; break;
-        case LogLevel::Error:       prefix = "[ERROR]"; break;
-        case LogLevel::Critical:    prefix = "[CRIT]"; break;
-        }
-
-        if (lvl <= m_lvl) {
-        #if BINF_PLATFORM != DESKTOP_SDL
-            Serial.printf("%s ", prefix);
-            Serial.printf(fmt, std::forward<Args>(args)...);
-            Serial.printf("\n");
-        #else 
-            char fullFmt[1024];
-            snprintf(fullFmt, sizeof(fullFmt), "%s %s", prefix, fmt);
-            SDL_Log(fullFmt, std::forward<Args>(args)...);
-        #endif
-        }
-    }
-
 }

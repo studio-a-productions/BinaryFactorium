@@ -4,7 +4,11 @@
 */
 
 #include <BinF/Engine.hpp>
+#if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
 #include <SPI.h>
+#elif BINF_PLATFORM == DESKTOP_SDL
+#include <SDL3/SDL.h>
+#endif
 #include <BinF/Engine/Internal.hpp>
 
 namespace BinF {
@@ -18,9 +22,10 @@ namespace BinF::Engine {
     Fri3dXP expander = Fri3dXP();
     #endif
     void Init() {
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         Serial.begin(115200);
-
         Wait(2000);
+        #endif
 
         //Logger.Info("(Engine) Init SPI");
         //SPI.begin(7, 8, 6);
@@ -46,6 +51,11 @@ namespace BinF::Engine {
     void Exit() {
         // while (true) scream("coffee!")
         ExitRenderer();
+        ExitInput();
         Delete(&FileSystem);
+
+        #if BINF_PLATFORM == DESKTOP_SDL
+        SDL_Quit();
+        #endif
     }
 }
