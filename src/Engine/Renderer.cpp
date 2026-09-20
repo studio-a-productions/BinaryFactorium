@@ -26,8 +26,9 @@ namespace BinF::Engine {
     using ScreenRow = colour[screen_x];
 
     // frame buffer memory
-    ScreenRow* framebuffer = nullptr;
-    ScreenRow* renderbuffer = nullptr;
+    ScreenRow* framebuffer      = nullptr;
+    ScreenRow* renderbuffer     = nullptr;
+    ScreenRow* graphicsbuffer   = nullptr;
 
     // RESOURCE MANAGEMENT -----------
     void InitRenderer() {
@@ -37,6 +38,7 @@ namespace BinF::Engine {
             return;
         }
         renderbuffer    = &framebuffer[screen_y];
+        graphicsbuffer  = framebuffer;
         
         #if BINF_PLATFORM != DESKTOP_SDL
         #if BINF_PLATFORM == FRI3D2026
@@ -78,10 +80,11 @@ namespace BinF::Engine {
         SDL_DestroyRenderer(Renderer);
         SDL_DestroyWindow(Window);
 
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         #endif
 
-        Free(framebuffer);
-        Free(renderbuffer);
+        Free(graphicsbuffer);
+
     }
 
     #if BINF_PLATFORM != DESKTOP_SDL
@@ -119,7 +122,7 @@ namespace BinF::Engine {
             data += stride;
         }
     }
-    inline void DrawWithBounds(const screen_pos x, const screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy) {
+    static inline void DrawWithBounds(const screen_pos x, const screen_pos y, const colourID* data, const screen_pos sx, const screen_pos sy) {
         // did someone ask, safety?
         // I hate clipping 
         
@@ -238,8 +241,6 @@ namespace BinF::Engine {
     void WaitForSPI() {
         #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
         tft.endWrite();
-        #elif BINF_PLATFORM == DESKTOP_SDL
-        SDL_QuitSubSystem(SDL_INIT_VIDEO);
         #endif
     }
     

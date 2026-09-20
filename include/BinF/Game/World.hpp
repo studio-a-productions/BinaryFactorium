@@ -20,5 +20,7 @@ namespace BinF::Game {
     // renders locally stored buffer
     void RenderWorld();
 
+    // cleans the world-allocated data
+    void DestroyWorld();
     
 }

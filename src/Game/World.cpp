@@ -25,7 +25,7 @@ namespace BinF::Game {
     }
     
     // HELPERS -------------
-    inline void RenderChunk(const u8 chunk, const PixelOffset start_cx, PixelOffset cy) {
+    static inline void RenderChunk(const u8 chunk, const PixelOffset start_cx, PixelOffset cy) {
         if ((start_cx + ChunkPixels < 0)  || (cy + ChunkPixels < 0))  return;
         if ((start_cx > Engine::screen_x) || (cy > Engine::screen_y)) return;
         
@@ -118,6 +118,5 @@ namespace BinF::Game {
             }
             ty += ChunkPixels;
         }
-
     }
 }

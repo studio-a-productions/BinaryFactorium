@@ -42,7 +42,6 @@ namespace BinF::Engine {
             if (ids) SDL_free(ids);
         }
     }
-
     #endif
     
     bool keyPrevStates[KEY_COUNT] = { false };
@@ -71,6 +70,12 @@ namespace BinF::Engine {
         return (raw > 0)
             ? static_cast<s16>((static_cast<s32>(raw - joystickDeadzone) * joystickDigitalH) / (joystickDigitalH - joystickDeadzone))
             : static_cast<s16>((static_cast<s32>(raw + joystickDeadzone) * joystickDigitalL) / (joystickDigitalL + joystickDeadzone));
+    }
+
+    static inline s16 InvertAxis(s16 value) {
+        return value == joystickDigitalL
+            ? joystickDigitalH
+            : static_cast<s16>(-value);
     }
     #endif
 
@@ -223,12 +228,12 @@ namespace BinF::Engine {
            /* poll first this */
             
             joystickX = ApplyDeadzone(SDL_GetGamepadAxis(Gamepad, SDL_GAMEPAD_AXIS_LEFTX));
-            joystickY = ApplyDeadzone(SDL_GetGamepadAxis(Gamepad, SDL_GAMEPAD_AXIS_LEFTY));
+            joystickY = InvertAxis(ApplyDeadzone(SDL_GetGamepadAxis(Gamepad, SDL_GAMEPAD_AXIS_LEFTY)));
         }
         joystickX = (keyboard[SDL_SCANCODE_D] || keyboard[SDL_SCANCODE_RIGHT]) ? joystickDigitalH
             : (keyboard[SDL_SCANCODE_A] || keyboard[SDL_SCANCODE_LEFT]) ? joystickDigitalL : joystickX;
-        joystickY = (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) ? joystickDigitalH
-            : (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) ? joystickDigitalL : joystickY;
+        joystickY = (keyboard[SDL_SCANCODE_S] || keyboard[SDL_SCANCODE_DOWN]) ? joystickDigitalL
+            : (keyboard[SDL_SCANCODE_W] || keyboard[SDL_SCANCODE_UP]) ? joystickDigitalH : joystickY;
         
         #else
         rawJX = 
