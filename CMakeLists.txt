@@ -8,16 +8,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # all into bin bin bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+# only single config respect this
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-        Debug
-        Release
-        RelWithDebInfo
-        MinSizeRel
-    )
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 endif()
+set(CMAKE_DEFAULT_BUILD_TYPE "Release" CACHE STRING "Default config for multi-config generators")
+
 
 include(FetchContent)
 
