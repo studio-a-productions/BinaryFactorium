@@ -1,5 +1,8 @@
 # Binary Factorium
 
+![BinnerFactorium Banner alt text?](./webassets/BannerFactorium.png)
+
+
 > Do you love the *sweet smell of industry* in the morning?
 
 > Does terra firma fill you with terror versus firm factory foundations?
