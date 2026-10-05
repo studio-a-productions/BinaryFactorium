@@ -32,3 +32,17 @@ For any case where you'd normally use `size_t`, we use `BinF::u32`.
 Binary Factorium, apart from being a game for the Fri3d Camp 2024 Badge, also tries to show how complex games can be made without eating up all system resources. Thus, by extension, we're targeting a memory footprint that *should never* exceed **a single** gigabyte.
 
 Will this bite (byte) us later? Who knows? 
+
+## Typenames
+
+For consistency, all types are captialised and use `British Spelling` conventions. 
+
+Do note that, even though this is now a convention, some types don't follow this (such as `s32` and `colour`). The reason for this, obviously, is that I didn't care back then. If you *really* need it, you may change them (all except for s32, u32, etc.) across all files, or make a small remap locally so that `Colour` = colour.
+
+## Pull Requests
+
+Pull Requests need be relevant to Issues and make sure they're tracable to those issues. 
+
+## Commits
+
+I don't care.
