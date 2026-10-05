@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Palette.hpp"
+#include "Renderer.hpp"
 
 namespace BinF::Engine {
     struct SpriteData {

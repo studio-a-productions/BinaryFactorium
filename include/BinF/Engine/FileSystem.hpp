@@ -1,0 +1,142 @@
+/*
+    Copyright (c) 2026 BinF Developers
+    Licensed under the Apache License, Version 2.0
+*/
+
+#pragma once
+
+#include "common.hpp"
+#if BINF_PLATFORM == FRI3D2026 || BINF_PLATFORM == FRI3D2024
+#include <SD.h>
+#elif BINF_PLATFORM == DESKTOP_SDL
+// I love porting
+#include <SDL3/SDL_filesystem.h>
+#include <SDL3/SDL_iostream.h>
+#endif
+
+namespace BinF::Engine {
+    // a number representing an active file within a FS
+    using FileID = u8;
+    // basically path strings for names (unix-like)
+    // should point to valid data for the duration of the path's usage
+    using FilePath = const char*;
+
+    // all fs use "file 0" as the lookup table or just as an invalid ID
+    constexpr FileID FileInvalid = 0;
+    constexpr FilePath FSExtension = ".bff";
+    constexpr FileID MaxOpenFiles = 16U;
+    constexpr u32 MaxFileName = FILENAME_MAX-24U;
+    constexpr u16 MaxFiles = 100U;
+    constexpr u32 TableBufferSize = 100U;
+    constexpr u64 FSMinSize = ONE_KB*5000ULL;   /* ~ 5 MB  */
+    constexpr u32 MaxFileSize = ONE_KB*10U;     /* ~ 10 KB */
+
+    enum class FSResult : BinF::u8 {
+        Ok = 0,
+        NotFound,
+        IOError,
+        NoSpace,
+    };
+    enum class FSState : BinF::u8 {
+        Good = 0,
+        Bad
+    };
+
+
+    // handle of a specific file for a FS
+    class FileHandle;
+
+    // File System (IO handle)
+    // may later get virtual functions and logic
+    // Uses Memory.hpp's New and Delete for handles!
+    class FileSystemClass;
+
+    struct FileSysImpl {
+        char FileNames[MaxOpenFiles][FILENAME_MAX];
+        #if BINF_PLATFORM == FRI3D2024 || BINF_PLATFORM == FRI3D2026
+        File Files[MaxOpenFiles];
+        #elif BINF_PLATFORM == DESKTOP_SDL
+        SDL_IOStream* Files[MaxOpenFiles] = { nullptr };
+        #endif
+        char* Buffer;
+    };
+
+    class FileSystemClass {
+    public:
+        FileSystemClass();
+        ~FileSystemClass();
+
+        FSState 
+        Begin();
+
+        FSState
+        State() const;
+        
+        FileHandle&
+        GetFile(FilePath);
+        
+        FileID 
+        GetFileID(FilePath);
+        
+        bool 
+        FileExists(FilePath) const;
+
+        // size of 0 means error/invalid
+        u32 FileSize(FilePath) const;
+        u32 FileSize(FileID) const;
+
+        // size must be specified beforehand and cannot be changed
+        FileHandle&
+        CreateFile(FilePath, u32 size=256);
+
+        FSResult
+        ReadFile(FileID, void* dest, u32 size = 0U /* 0 means full file */, u32 offset=0U);
+        
+        FSResult
+        WriteFile(FileID id, const void*, u32 size /* sizeof data */, u32 offset=0U);
+
+        FSResult
+        RenameFile(FileID, FilePath);
+
+        // Deletes file, ID is then invalid as it points to nullptr
+        FSResult 
+        DeleteFile(FileID);
+        // ID is clear for other files, thus invalid (unsafe)
+        FSResult
+        FreeID(FileID);
+    private:
+        bool PathValid(FilePath) const;
+        bool IdValid(FileID) const;
+        FSState Bad();
+        FileID NewFileID(FilePath);
+        // opaque handle implementation
+        struct FileSysImpl m_Impl;
+        FSState m_State;
+    };
+
+    // default FileSystem implementation of BinF
+    extern FileSystemClass& FileSystem;
+
+    class FileHandle {
+    public:
+        FileHandle(FileSystemClass& fs=FileSystem, const FileID fid=FileInvalid) : m_fs{fs}, m_id{fid} { }
+        ~FileHandle();
+        bool IsValid() const;
+        u32 Size() const;
+
+        FSResult
+        Read(void*dest, u32 size=0U /* 0 means full file */, u32 offset = 0U) const;
+        FSResult
+        Write(const void* dat, u32 size /* sizeof data */, u32 offset=0U) const;
+        FSResult
+        Rename(FilePath) const;
+
+        // afterwards, use Delete<FileHandle>(...); to free the handle's memory itself
+        FSResult
+        Delete();
+    private:
+        FileID m_id;
+        FileSystemClass& m_fs;
+    };
+    extern FileHandle InvalidFile;
+}

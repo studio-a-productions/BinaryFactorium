@@ -4,8 +4,14 @@
 */
 
 #pragma once
+#include <BinF/Engine/Platform.hpp>
 
+#if BINF_PLATFORM != DESKTOP_SDL
 #include <Arduino.h>
+#else
+#include <stddef.h>
+#include <stdint.h>
+#endif
 
 namespace BinF {
 
@@ -21,6 +27,11 @@ namespace BinF {
     using s16 = int16_t;
     using s8  = int8_t;
 
+    #if BINF_PLATFORM == DESKTOP_SDL
+    typedef float float_t;
+    typedef double double_t;
+    #endif
+    
     using f32 = float_t;
     using f64 = double_t;
 
@@ -28,4 +39,5 @@ namespace BinF {
     constexpr u32 u32m = 0xFFFFFFFF;
     constexpr u16 u16m = 0xFFFF;
     constexpr u8  u8m  = 0xFF;
+    constexpr BinF::u32 ONE_KB = 1024;
 }

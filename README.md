@@ -1,5 +1,22 @@
 # Binary Factorium
 
+![BinnerFactorium Banner alt text?](./webassets/BannerFactorium.png)
+
+
+> Do you love the *sweet smell of industry* in the morning?
+
+> Does terra firma fill you with terror versus firm factory foundations?
+
+> Have you ever looked at mother nature's plendour and thought, ***"Ugh..."***?
+
+Well then, welcome aboard! You will be nobly shaving off that superfluous greenery, refining it into pure profit!
+
+We have brave Fix-It pioneers, building up bargains factories, and now you too can join them!
+
+> Welcome to the Awesome Shop.
+
+# Serious Info Stuff (SIS)
+
 This project is a Factorio-inspired game for the Fri3d Badge 2024 (and maybe 2026). It is currently in-development.
 
 It'll be free for all to *use*, *learn*, and *install*, under the [licence](LICENCE) of this project.
@@ -8,21 +25,38 @@ It'll be free for all to *use*, *learn*, and *install*, under the [licence](LICE
 
 Binary Factorium uses the "shortname" `BinF` *(pronounced 'binf')* for almost all its writing. If this name were to be already in use, then know Binary Factorium is not trying to impersonate whatever uses it.
 
+## Commit History
+
+As you can see in the history of this repository, I mainly use Git as a save tool and as a way to sync my progress (however small) on other devices. Most of the code you see here is written in my free time, and not always on the same desktop/enviroment. Do *not* expect clean commit messages or diffs.
+
 # Development & Maintenance
 
-## StudA
+## Current Status
 
-**Role**: *General Project Manager/Maintainer* (GPM) & *Backend*
+Currently the project is aiming for a **Minimal Viable Product** (*MVP*) meaning that it won't be the *complete* game. After [**Fri3d**](https://fri3d.be/) **2026** the game's development will continue, though it may be retargeted to desktop. If enough people like this project, it will become an actual game to play on [Steam](https://store.steampowered.com/about).
 
+The current goal is to have a single, simple world with some basic factory logic.
 
-## WHY_youLOokingAT_NaMe
+Most of the Factory Logic has already been thought about on paper, but not yet implemented. (this is what we in science call [*procrastination*](https://en.wikipedia.org/wiki/Procrastination))
 
-**Role**: *Game Code* & *Design*
+If you want to know the intended (& already planned) resource flow, look at [this overview](./webassets/Factorium.png). This was made with [drawio](https://www.drawio.com/).
 
+> Yes, I love pasting in links °v°
+
+## People
+
+### StudA (me)
+
+**Role**: *Main Developer & Designer*
+
+### WHY_youLOokingAT_NaMe
+
+**Role**: *Support* (vocal)
 
 # Memory Overview
 
 Mem/stor consumption overview (this will be later moved to docs)
+Updates come and go, since I'm rushing to finish it.
 
 ## const (FLASH)
 
@@ -46,8 +80,6 @@ Why not use a single buffer? Well, screen tear is a big problem. If you want to 
 | KeyTask | ~ 8.2 kb | The space allocated for the InputTask task/thread, which does debouncing on key presses async from game/engine logic |
 | Key data | 204 bytes | Not counting for atomics, this is around the amount of memory the arrays take up |
 
-
-
 ### World & Chunk
 
 | component | memory | info |
@@ -56,3 +88,6 @@ Why not use a single buffer? Well, screen tear is a big problem. If you want to 
 
 
 
+**You have reached the bottem of the page**, please pay `500 MegaCredits` to continue.
+
+![MegaCorp Incorporated corporation Fix-It contracted entity of personhood inside regulation low-budget suit](./webassets/PlayerSprite.gif)

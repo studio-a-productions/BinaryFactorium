@@ -3,8 +3,10 @@
     Licensed under the Apache License, Version 2.0
 */
 
+#pragma once
+
 #include "common.hpp"
-#include "Colour.hpp"
+
 namespace BinF::Engine {
     using screen_pos = s16;
 

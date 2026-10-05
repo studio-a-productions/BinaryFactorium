@@ -12,9 +12,8 @@ Using references is allowed (of course), but do know that it practically is stil
 
 ## Objects
 
-In general, avoid `class`es as they often add memory overhead. Only add objects when using them actually improves code quality, and you're not storing an array of them (prefer to use/create a special class for that instead or don't use objects at all).
-
-The codebase also allows `structs`, but doesn't allow for **AoS** (*arrays of structs*), again, to prevent memory overhead.
+In general, avoid virtual `class`es as they often add memory overhead. Only add `virtual` when using them actually improves code/design quality.
+The codebase also allows `structs`, but doesn't allow for **AoS** in cases where you need to loop over a single element of that object (*arrays of structs*), again, to prevent memory overhead.
 
 ## Namespace
 
@@ -23,3 +22,27 @@ When creating a file for *BinF*, it should either belong to `Game` or `Engine`, 
 ## Documentation
 
 While documentation is important, we'll not concern ourselves with it constantly. In the event that something is unclear, you may open up a `GitHub Issue` using the "question" or "doc-req" tag. 
+
+## Sizes
+
+For any case where you'd normally use `size_t`, we use `BinF::u32`.
+
+> Why?
+
+Binary Factorium, apart from being a game for the Fri3d Camp 2024 Badge, also tries to show how complex games can be made without eating up all system resources. Thus, by extension, we're targeting a memory footprint that *should never* exceed **a single** gigabyte.
+
+Will this bite (byte) us later? Who knows? 
+
+## Typenames
+
+For consistency, all types are captialised and use `British Spelling` conventions. 
+
+Do note that, even though this is now a convention, some types don't follow this (such as `s32` and `colour`). The reason for this, obviously, is that I didn't care back then. If you *really* need it, you may change them (all except for s32, u32, etc.) across all files, or make a small remap locally so that `Colour` = colour.
+
+## Pull Requests
+
+Pull Requests need be relevant to Issues and make sure they're tracable to those issues. 
+
+## Commits
+
+I don't care.

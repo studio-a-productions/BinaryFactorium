@@ -14,10 +14,10 @@ namespace BinF::Game {
     /* 
     x (is buildable) x (no walk) xxxxxx (sprite index)
     */
-    using Tile = u8;
-    constexpr u8 TileSize = 16;
-    using TileSprite = Engine::colourID[TileSize*TileSize];    
+    using Tile = BinF::u8;
 
+    constexpr u8 TileSize = 32U;
+    using TileSprite = Engine::colourID[TileSize*TileSize];    
 
     // access helpers, could be macros, but for type safety they're just inline functions
 
@@ -32,9 +32,4 @@ namespace BinF::Game {
     inline u8 TileSpriteIndx(Tile tile) {
         return tile & 63;
     }
-    
-    // this is actually a 2D array [64][256]
-    const TileSprite TileSprites[64] = {  };
-
-
 }

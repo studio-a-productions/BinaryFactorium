@@ -4,6 +4,12 @@
 */
 
 #pragma once
-
-#include <Arduino.h>
 #include <BinF/Types.hpp>
+#include "Platform.hpp"
+
+#if BINF_PLATFORM == DESKTOP_SDL
+#include <stdio.h>
+#include <stddef.h>
+#include <math.h>
+#include <utility>
+#endif

@@ -12,10 +12,15 @@ namespace BinF::Game {
     // Chunk Coordinates
     using WorldAxis = s32;
 
+    void RegenWorld();
+
     // moves the world based on Camera
     void UpdateWorld();
     
     // renders locally stored buffer
     void RenderWorld();
 
+    // cleans the world-allocated data
+    void DestroyWorld();
+    
 }
